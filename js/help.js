@@ -134,26 +134,58 @@ HELP = (function($, window, document, undefined) {
 
 
     //
+    // Convert a date-time String into a Timestamp.
     //
+    // Expected dateString parts order to be: "DD-MM-YYYY HH:MM:SS".
+    // Date can be separated by /, - or spaces.
+    // Ex: dateString = "23/08/2023, 04:53:34";
     //
-    pub.getTimestamp = function(dateString, localTimezone) {
-        if (dateString) {
-            return new Date(dateString).getTime();
-        }
-        var date = new Date(),
+    pub.getTimestamp = (dateString, localTimezone) => {
+        let date,
+            lang = pub.getCurrentLang(),
             options = {};
 
         if (localTimezone) {
             options.timeZone = pub.timezone;
         }
-        date = date.toLocaleString(pub.getCurrentLang, options);
 
-        return new Date(date).getTime();
+        if (dateString) {
+            let lastSpaceIndex = dateString.lastIndexOf(" "),
+                dateStr = dateString.substring(0, lastSpaceIndex),
+                timeStr = dateString.substring(lastSpaceIndex + 1),
+                dateParts = dateStr.replace(/[-\/\s]/g, "||").split('||');
+                date = new Date();
+
+            // Convert month. Ex: from 08 to "Aug" (short names).
+            date.setMonth(dateParts[1] -1);
+            options.month = 'short';
+            dateParts[1] = date.toLocaleString(lang, options);
+
+            // Rebuild as: 23 Aug 2023 04:53:34.
+            // May still contain a comma but thats ok.
+            dateString = dateParts.join(' ') +` ${timeStr} GMT`;
+        }
+        else {
+            // Use the current date/time.
+            dateString = new Date();
+        }
+
+        // Replace options but keep (optional) "timeZone".
+        $.extend(options, {
+            day: "numeric",
+            month: "numeric",
+            year: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric"
+        });
+        date = new Date(Date.parse(dateString + " GMT")).toLocaleString(lang, options);
+        return Date.parse(date);
     };
     
 
     //
-    //
+    // Convert a timestamp into an ISO date format (ex: 2023-08-23T04:53:34.000Z)
     //
     pub.getISOdate = function(dateString, localTimezone) {
         var date = pub.getTimestamp(dateString, localTimezone);

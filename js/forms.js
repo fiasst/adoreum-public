@@ -189,23 +189,29 @@ $.fn.buildSelectOptions = function(options) {
             select = $('select', wrapper),
             $default = $('.input-default-value', wrapper),
             defaultValue = HELP.sanitizeHTML(!!$default.text() ? $default.text() : $default.attr('data-value')) || '',
-            values = [];
+            values = [],
+            isMultiSelect = select.is('select[multiple]');
+
+        if (isMultiSelect) {
+            defaultValue = defaultValue.split('|');
+        }
 
         $(this).find('.w-dyn-item').each(function() {
-            var val = $(this).text();
+            var val = $(this).text(),
+                selected = (val == defaultValue) ? 'selected' : false;
+
+            if (isMultiSelect) {
+                selected = ($.inArray(val, defaultValue) > -1);
+            }
+
             if (!val || $.inArray(val, values) > -1) return;// Skip empty or duplicate values.
             values.push(val);
 
-            $(this).data('lang-en', val);// Store a non-translated string in .data().
-
             $('<option />', {
                 value: val,
-                selected: (val == defaultValue) ? 'selected' : false
+                selected: selected
             }).text(val).appendTo( $(select) );
         });
-        if (select.hasClass('select2-field')) {
-            select.createSelect2();
-        }
     });
 };
 
