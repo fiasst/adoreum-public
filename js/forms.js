@@ -186,11 +186,11 @@ $.fn.buildSelectOptions = function(options) {
 
     $.each(this, function(i, el) {
         var wrapper = $(this).parent('.select-list-wrapper'),
-            select = $('select', wrapper),
+            $select = $('select', wrapper),
             $default = $('.input-default-value', wrapper),
             defaultValue = HELP.sanitizeHTML(!!$default.text() ? $default.text() : $default.attr('data-value')) || '',
             values = [],
-            isMultiSelect = select.is('select[multiple]');
+            isMultiSelect = $select.is('select[multiple]');
 
         if (isMultiSelect) {
             defaultValue = defaultValue.split('|');
@@ -210,8 +210,9 @@ $.fn.buildSelectOptions = function(options) {
             $('<option />', {
                 value: val,
                 selected: selected
-            }).text(val).appendTo( $(select) );
+            }).text(val).appendTo( $select );
         });
+        $select.trigger('change');
     });
 };
 
