@@ -12,7 +12,6 @@ var PROFILE = (function($, window, document, undefined) {
             var selected = $("option:selected", this).filter(function() {
                     return $(this).text() === "Other";
                 });
-            console.log(selected);
 
             $('#motive-other-wrapper').toggleClass('hide', (selected.length < 1));
         })

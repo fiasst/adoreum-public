@@ -142,7 +142,7 @@ HELP = (function($, window, document, undefined) {
     //
     pub.getTimestamp = (dateString, localTimezone) => {
         let date,
-            lang = pub.getCurrentLang(),
+            lang = pub.getCurrentLang,
             options = {};
 
         if (localTimezone) {
