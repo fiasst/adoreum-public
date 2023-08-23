@@ -399,6 +399,20 @@ HELP = (function($, window, document, undefined) {
     //
     //
     //
+    pub.parseIfStringJSON = function(str) {
+        if (typeof str === 'string') {
+            str = str.trim();
+            if (str[0] == '{' && str[str.length - 1] == '}') {
+                return JSON.parse(str);
+            }
+        }
+        return str;
+    };
+
+
+    //
+    //
+    //
     pub.formatDDMMYYYY = (value, divider = ' / ') => {
         var val = value.replace(/[^\d]/g, ''),// Remove non-digit characters
             format = '',
