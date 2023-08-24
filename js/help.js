@@ -206,6 +206,21 @@ HELP = (function($, window, document, undefined) {
 
 
     //
+    // Get a value from a flat or deep (nested) Object.
+    //
+    pub.getProperty = function(obj, key) {
+        let keys = key.split('.'),
+            value = obj;
+
+        for (let i = 0; i < keys.length; i++) {
+            value = value[keys[i]];
+            if (value === undefined || value === null) return null;
+        }
+        return value;
+    };
+
+
+    //
     //
     //
     pub.callNestedFunction = function(string, ...args) {
