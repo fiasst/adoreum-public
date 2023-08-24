@@ -39,7 +39,7 @@ var ACCOUNT = (function($, window, document, undefined) {
         // Validate confirm field.
         //
         if (!$confirm.val() || $confirm.val().toLowerCase() != "delete") {
-            params.message = "[p]You must type [strong]\"DELETE\"[/strong] in the required field to confirm that you want to delete your account.[/p]";
+            params.message = "[p]You must type [strong]DELETE[/strong] in the required field to confirm that you want to delete your account.[/p]";
             params.type = "info";
             params.options.title = "Field required";
             params.options.actions = [
