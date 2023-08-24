@@ -92,7 +92,7 @@ HELP = (function($, window, document, undefined) {
                 return openTag.endsWith(']') ? openTag.slice(0, -1) +'>' : openTag +'>';
             })
             // Remove substrings that start with "on" (event attributes. ex: "onclick").
-            .replace(/(\s*<[^>]*)on\w+/gi, '');
+            .replace(/on\w{2,}=/gi, '');
     };
 
 
