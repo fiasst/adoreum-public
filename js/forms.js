@@ -208,7 +208,7 @@ $.fn.buildSelectOptions = function(options) {
             values.push(val);
 
             $('<option />', {
-                value: val,
+                value: $.trim(val),
                 selected: selected
             }).text(val).appendTo( $select );
         });

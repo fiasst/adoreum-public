@@ -73,7 +73,7 @@ textarea {
 .accordion {
   &.active {
     .accordion-icon {
-      transform: rotate(0deg);
+      transform: rotate(-45deg);
     }
   }
 }
