@@ -197,7 +197,7 @@ $.fn.buildSelectOptions = function(options) {
         }
 
         $(this).find('.w-dyn-item').each(function() {
-            var val = $(this).text(),
+            var val = $.trim($(this).text()),
                 selected = (val == defaultValue) ? 'selected' : false;
 
             if (isMultiSelect) {
@@ -208,7 +208,7 @@ $.fn.buildSelectOptions = function(options) {
             values.push(val);
 
             $('<option />', {
-                value: $.trim(val),
+                value: val,
                 selected: selected
             }).text(val).appendTo( $select );
         });
