@@ -3,6 +3,16 @@ var MAIN = (function($, window, document, undefined) {
 
 
     //
+    // Memberstack plan names.
+    //
+    pub.planNames = {
+        "pln_international-04fg0amm": "International",
+        "pln_individual-1o2k0g6o": "Individual",
+        "pln_corporate-xs2l0g4l": "Corporate"
+    };
+
+
+    //
     // Show or remove content based on conditions.
     //
     pub.controlHTML = function($elements, display) {
