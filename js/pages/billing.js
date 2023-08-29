@@ -3,24 +3,9 @@ var BILLING = (function($, window, document, undefined) {
 
 
     //
-    // User-friendly versions of Stripe invoice terminology.
-    //
-    pub.invoiceReasons = {
-        subscription_create: "Subscription created",
-        subscription_cycle: "Subscription renewal",
-        subscription_update: "Subscription updated",
-        subscription: "Subscription",
-        manual: "Manual payment",
-        upcoming: "Upcoming",
-        subscription_threshold: "Billing threshold reached"
-    };
-
-
-    //
     // Webhooks.
     //
-    const listMembersInvoices = "https://hook.eu2.make.com/14098n5ix6acwe8fz1xamnemchjqmnfb";
-    const cancelMembersSubscription = (planId, priceId, customerID, amount) => `https://hook.us1.make.com/bg7py9xulyk6m3wyhmg5okn2ctcfkjiw?plan_id=${planId}&price_id=${priceId}&customer_id=${customerID}&amount=${amount}`;
+    const cancelMembersSubscription = (planId, priceId, customerID, amount) => `https://hook.eu2.make.com/dnl8219shrx18c8q5zf0jbtxs2c7hkr5?plan_id=${planId}&price_id=${priceId}&customer_id=${customerID}&amount=${amount}`;
 
 
     //
@@ -52,16 +37,11 @@ var BILLING = (function($, window, document, undefined) {
                         currencySymbol = HELP.getCurrencySymbol('en-US', payment.currency),
                         cancelLink = nextBillDate = lastBillDate = null;
 
-                    if (currencySymbol == "THB") {
-                        // We don't need getCurrencySymbol() as it outputs "THB" which is displayed by payment.currency already.
-                        currencySymbol = "";
-                    }
-
                     if (payment.nextBillingDate) {
-                        nextBillDate = $('<div>', {class: ["bill-next"], html: '<strong>Your plan renews on</strong> '+ HELP.formatTimestamp(payment.nextBillingDate) });  
+                        nextBillDate = $('<div>', {class: ["bill-next"], html: '<strong>Renews on:</strong> '+ HELP.formatTimestamp(payment.nextBillingDate) });  
                     }
                     if (payment.lastBillingDate) {
-                        lastBillDate = $('<div>', {class: ["bill-last"], html: '<strong>Last billing date:</strong> '+ HELP.formatTimestamp(payment.lastBillingDate) });   
+                        lastBillDate = $('<div>', {class: ["bill-last"], html: '<strong>Last billed:</strong> '+ HELP.formatTimestamp(payment.lastBillingDate) });   
                     }
                     if (item['status'] == "ACTIVE" || item['status'] == "TRIALING") {
                         hasActiveSubscription = true;
@@ -80,8 +60,7 @@ var BILLING = (function($, window, document, undefined) {
                             $('<div>', {
                                 class: ["amount"],
                                 html:
-                                    '<strong>Amount:</strong> '+ 
-                                    '<span>'+payment.currency.toUpperCase()+'</span> '+
+                                    '<strong>Amount:</strong> '+
                                     currencySymbol + HELP.formatCurrency(payment.amount)
                             }),
                             nextBillDate,
@@ -115,67 +94,6 @@ var BILLING = (function($, window, document, undefined) {
                     });
                 });
             }
-
-            //
-            // Get list of Member's invoices.
-            //
-            HELP.sendAJAX({
-                url: listMembersInvoices,
-                data: {
-                    env: HELP.getEnvType(),
-                    customer_id: USER.current.stripeCustomerId
-                },
-                method: "GET",
-                callbackSuccess: function(data) {
-                    var invoices = [];
-
-                    $.each(data, function(i, item) {
-                        var periodDate = HELP.formatTimestamp(item['Period']['Start'], false, true),
-                            currencySymbol = HELP.getCurrencySymbol('en-US', item['Amount']['Currency']),  
-                            paidDate = null,
-                            // title = item['Subscription'] ? "Subscription" : "One-time";
-                            title = item['Subscription'] ? pub.invoiceReasons[item['Billing Reason']] : "Credits purchased";
-
-                        if (currencySymbol == "THB") {
-                            // We don't need getCurrencySymbol() as it outputs "THB" which is displayed by payment.currency already.
-                            currencySymbol = "";
-                        }
-
-                        if (item['Paid date']) {
-                            paidDate = $('<div>', {
-                                class: ["date-paid"],
-                                html: '<strong>Paid:</strong> '+HELP.formatTimestamp(item['Paid date'], false, true)
-                            });   
-                        }
-                        invoices.push(
-                            $('<div class="plan">').append(
-                                $('<div>', {class: ["title"], html: '<h3>'+title+' - '+periodDate+'</h3>'}),
-                                $('<div>', {
-                                    class: ["number"],
-                                    html:
-                                        '<strong>Invoice:</strong> <a href="'+item['Invoice URL']+'" target="_blank">'+
-                                        item['Invoice Number']+'</a>'
-                                }),
-                                $('<div>', {class: ["status"], html: '<strong>Status:</strong> '+item['Status']}),
-                                $('<div>', {
-                                    class: ["amount"],
-                                    html:
-                                        '<span>'+item['Amount']['Currency'].toUpperCase()+'</span> '+
-                                        currencySymbol + HELP.formatCurrency(item['Amount']['Paid'] / 100)
-                                }),
-                                paidDate
-                            )
-                        );
-                    });
-                    if (invoices.length < 1) {
-                        invoices = $('<p>', {html: "You don't have any invoices yet."});
-                    }
-                    $('#invoices').append(invoices);
-                },
-                callbackError: function(data) {
-                    console.log('error');
-                }
-            });
         });
     });
 
