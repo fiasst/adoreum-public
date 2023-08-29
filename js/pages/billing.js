@@ -19,7 +19,7 @@ var BILLING = (function($, window, document, undefined) {
     //
     // Webhooks.
     //
-    const listMembersInvoices = "https://hook.us1.make.com/xq3ycqbici93ertr6ixfoea3hg9sqsew";
+    const listMembersInvoices = "https://hook.eu2.make.com/14098n5ix6acwe8fz1xamnemchjqmnfb";
     const cancelMembersSubscription = (planId, priceId, customerID, amount) => `https://hook.us1.make.com/bg7py9xulyk6m3wyhmg5okn2ctcfkjiw?plan_id=${planId}&price_id=${priceId}&customer_id=${customerID}&amount=${amount}`;
 
 
@@ -34,11 +34,8 @@ var BILLING = (function($, window, document, undefined) {
             var plans = USER.current.planConnections || [],
                 wrapper = $('#plans-wrapper');
 
-            if (plans.length < 1) {
-                // No plans exist.
-                wrapper.append("<p>You haven't purchased a plan yet. <a href=\"/pricing\">Select a plan</a> to post jobs and start finding candidates.</p>");    
-            }
-            else {
+            if (plans.length > 0) {
+                // User has a plan.
                 var subscriptionPlans = [],
                     customerID = USER.current.stripeCustomerId,
                     hasActiveSubscription = false;

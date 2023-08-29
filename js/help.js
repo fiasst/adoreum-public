@@ -113,6 +113,20 @@ HELP = (function($, window, document, undefined) {
 
 
     //
+    // Format money.
+    //
+    pub.formatCurrency = function(amount) {
+        return parseFloat(amount, 10).toFixed(2).toString();
+    };
+
+
+    //
+    // Get $£€ etc symbols.
+    //
+    pub.getCurrencySymbol = (locale, currency) => (0).toLocaleString(locale, { style: 'currency', currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(/\d/g, '').trim();
+
+
+    //
     // Get/set querystring.
     //
     pub.getSetQuerystring = (params = '', includePath) => {
@@ -134,6 +148,42 @@ HELP = (function($, window, document, undefined) {
 
 
     //
+    // Return human-friendly date.
+    //
+    pub.formatTimestamp = function(timestamp, showTime, localTimezone) {
+        if (!timestamp) return;
+
+        var date = new Date(timestamp),
+            locale = pub.getCurrentLang(),
+            options = {
+                //weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            };
+        if (localTimezone) {
+            // Convert to localtime if it's not already converted.
+            options.timeZone = pub.timezone;
+        }
+        if (showTime) {
+            $.extend(options, {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        if (typeof timestamp == "string") {
+            // Convert to a timestamp.
+            timestamp = date.getTime();
+        }
+        if (timestamp.toString().length < 11) {
+            date.setTime(timestamp * 1000);
+        }
+        return date.toLocaleDateString(locale, options);
+    };
+
+
+    //
     // Convert a date-time String into a Timestamp.
     //
     // Expected dateString parts order to be: "DD-MM-YYYY HH:MM:SS".
@@ -142,7 +192,7 @@ HELP = (function($, window, document, undefined) {
     //
     pub.getTimestamp = (dateString, localTimezone) => {
         let date,
-            lang = pub.getCurrentLang,
+            lang = pub.getCurrentLang(),
             options = {};
 
         if (localTimezone) {
@@ -187,7 +237,7 @@ HELP = (function($, window, document, undefined) {
     //
     // Convert a timestamp into an ISO date format (ex: 2023-08-23T04:53:34.000Z)
     //
-    pub.getISOdate = function(dateString, localTimezone) {
+    pub.getISOdate = (dateString, localTimezone) => {
         var date = pub.getTimestamp(dateString, localTimezone);
         return new Date(date).toISOString();
     };
@@ -269,6 +319,37 @@ HELP = (function($, window, document, undefined) {
                 return obj[key] == values ? obj : null;
             });
         }
+    };
+
+
+    //
+    // Sort 2 values by order ASC/DESC and handle null values.
+    //
+    function sort(a, b, order) {
+        if (a === null) return order === 'desc' ? 1 : -1;
+        if (b === null) return order === 'desc' ? -1 : 1;
+        return order === 'desc' ? b - a : a - b;
+    }
+
+
+    //
+    // Useful for sorting an Array of businesses Objects by state.active appearing first.
+    //
+    pub.sortArrayByObjectValue = function(array, key, val, order = 'desc') {
+        return array.sort((a, b) => {
+            // For deep (nested) values.
+            a = pub.getProperty(a, key);
+            b = pub.getProperty(b, key);
+
+            if (val) {
+                // Sort by key's value matching the supplied value.
+                return order==='desc' ? (b===val)-(a===val) : (a===val)-(b===val);
+            }
+            else {
+                // Sort by value.
+                return sort(a, b, order);
+            }
+        });
     };
 
 
