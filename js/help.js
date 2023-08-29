@@ -11,7 +11,7 @@ HELP = (function($, window, document, undefined) {
 
 
     pub.timezone = "Europe/London";
-    pub.getCurrentLang = 'en';
+    pub.getCurrentLang = () => 'en';
 
 
     //
