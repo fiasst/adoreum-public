@@ -32,7 +32,7 @@ var BILLING = (function($, window, document, undefined) {
                     if (item['type'] != "SUBSCRIPTION") {
                         return;
                     }
-                    var planName = MAIN.planNames[item['planId']],
+                    var planName = MAIN.planNames[item['planId']] || 'Subscription',
                         payment = item['payment'],
                         currencySymbol = HELP.getCurrencySymbol('en-US', payment.currency),
                         cancelLink = nextBillDate = lastBillDate = null;
