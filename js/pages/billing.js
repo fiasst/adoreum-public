@@ -49,7 +49,8 @@ var BILLING = (function($, window, document, undefined) {
                         cancelLink = $('<a>', {
                             'href': cancelMembersSubscription(item.planId, payment.priceId, customerID, payment.amount),
                             'text': 'Cancel subscription',
-                            'class': 'link-cancel'
+                            'class': 'link-cancel',
+                            'data-confirm': 'Are you sure you want to cancel your member subscription?'
                         });
                     }
 
@@ -91,7 +92,7 @@ var BILLING = (function($, window, document, undefined) {
                         method: "GET",
                         callbackSuccess: function(data) {
                             MAIN.thinking(false);
-                            MAIN.handleAjaxResponse(data, $form);
+                            MAIN.handleAjaxResponse(data);
                         },
                         callbackError: function(data) {
                             MAIN.thinking(false);
