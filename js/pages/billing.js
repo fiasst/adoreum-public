@@ -3,12 +3,6 @@ var BILLING = (function($, window, document, undefined) {
 
 
     //
-    // Webhooks.
-    //
-    const cancelMembersSubscription = (planId, priceId, customerID, amount) => `https://hook.eu2.make.com/dnl8219shrx18c8q5zf0jbtxs2c7hkr5?plan_id=${planId}&price_id=${priceId}&customer_id=${customerID}&amount=${amount}`;
-
-
-    //
     // On DOM ready.
     //
     $(function() {
@@ -37,20 +31,23 @@ var BILLING = (function($, window, document, undefined) {
                         currencySymbol = HELP.getCurrencySymbol('en-US', payment.currency),
                         cancelLink = nextBillDate = lastBillDate = null;
 
-                    if (payment.nextBillingDate) {
-                        nextBillDate = $('<div>', {class: ["bill-next"], html: '<strong>Renews on:</strong> '+ HELP.formatTimestamp(payment.nextBillingDate) });  
+                    // If plan has been cancelled but is still active until expiry date.
+                    if (payment.cancelAtDate) {
+                        nextBillDate = $('<div>', {class: ["bill-next"], html: '<strong>Your plan will cancel on:</strong> '+ HELP.formatTimestamp(payment.cancelAtDate) });
+                    }
+                    else if (payment.nextBillingDate) {
+                        nextBillDate = $('<div>', {class: ["bill-next"], html: '<strong>Renews on:</strong> '+ HELP.formatTimestamp(payment.nextBillingDate) });
                     }
                     if (payment.lastBillingDate) {
-                        lastBillDate = $('<div>', {class: ["bill-last"], html: '<strong>Last billed:</strong> '+ HELP.formatTimestamp(payment.lastBillingDate) });   
+                        lastBillDate = $('<div>', {class: ["bill-last"], html: '<strong>Last billed:</strong> '+ HELP.formatTimestamp(payment.lastBillingDate) });
                     }
                     if (item['status'] == "ACTIVE" || item['status'] == "TRIALING") {
                         hasActiveSubscription = true;
 
                         cancelLink = $('<a>', {
-                            'href': cancelMembersSubscription(item.planId, payment.priceId, customerID, payment.amount),
-                            'text': 'Cancel subscription',
-                            'class': 'link-cancel',
-                            'data-confirm': 'Are you sure you want to cancel your member subscription?'
+                            'href': '#',
+                            'text': 'Manage subscription',
+                            'class': 'trigger-customer-portal link-grey'
                         });
                     }
 
@@ -73,33 +70,8 @@ var BILLING = (function($, window, document, undefined) {
 
                 if (subscriptionPlans.length > 0) {
                     $('#subscriptions').append(subscriptionPlans);
-                    $('#banner-sub-join').toggleClass('hide', hasActiveSubscription);
+                    // $('#banner-sub-join').toggleClass('hide', hasActiveSubscription);
                 }
-              
-                $('.link-cancel').on('click', function(e) {
-                    e.preventDefault();
-                    var $link = $(this),
-                        msg = HELP.sanitizeHTML($link.attr('data-confirm'));
-
-                    if (msg && !confirm(msg)) {
-                        return false;
-                    }
-                    MAIN.thinking(true, false);
-                    
-                    HELP.sendAJAX({
-                        url: $link.attr('href'),
-                        data: HELP.ajaxMetaValues(),
-                        method: "GET",
-                        callbackSuccess: function(data) {
-                            MAIN.thinking(false);
-                            MAIN.handleAjaxResponse(data);
-                        },
-                        callbackError: function(data) {
-                            MAIN.thinking(false);
-                            console.log('error');
-                        }
-                    });
-                });
             }
         });
     });

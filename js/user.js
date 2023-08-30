@@ -25,6 +25,18 @@ USER = (function($, window, document, undefined) {
 
 
     //
+    // Launch the Stripe portal for managing payments and subscriptions.
+    // Useful when a link loads via AJAX and doesn't trigger the MS [data-ms-action="customer-portal"] event.
+    //
+    pub.launchStripeCustomerPortal = () => {
+        MAIN.thinking(true, false);
+        HELP.waitFor(window, "$memberstackDom", 50, function() {
+            $memberstackDom.launchStripeCustomerPortal();
+        });
+    }
+
+
+    //
     //
     //
     pub.updateCurrentUser = function(obj) {
@@ -124,6 +136,20 @@ USER = (function($, window, document, undefined) {
         // CTA button is in the dialog confirming your account was deleted.
         $(document).on('click', '#trigger-ghost-logout', pub.logout);
     };
+
+
+    //
+    // On DOM ready.
+    //
+    $(function() {
+        //
+        // Launch Stripe Customer Portal with custom trigger.
+        //
+        $(document).on('click', '.trigger-customer-portal', function(e) {
+            e.preventDefault();
+            pub.launchStripeCustomerPortal()
+        });
+    });
     
 
 
