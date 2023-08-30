@@ -29,11 +29,13 @@ var BILLING = (function($, window, document, undefined) {
                     var planName = MAIN.planNames[item['planId']] || 'Subscription',
                         payment = item['payment'],
                         currencySymbol = HELP.getCurrencySymbol('en-US', payment.currency),
-                        cancelLink = nextBillDate = lastBillDate = null;
+                        cancelLink = nextBillDate = lastBillDate = null,
+                        statusLabel = item.status;
 
                     // If plan has been cancelled but is still active until expiry date.
                     if (payment.cancelAtDate) {
                         nextBillDate = $('<div>', {class: ["bill-next"], html: '<strong>Your plan will cancel on:</strong> '+ HELP.formatTimestamp(payment.cancelAtDate) });
+                        statusLabel = 'SET TO CANCEL';
                     }
                     else if (payment.nextBillingDate) {
                         nextBillDate = $('<div>', {class: ["bill-next"], html: '<strong>Renews on:</strong> '+ HELP.formatTimestamp(payment.nextBillingDate) });
@@ -54,7 +56,7 @@ var BILLING = (function($, window, document, undefined) {
                     subscriptionPlans.push(
                         $('<div class="plan">').append(
                             $('<div>', {class: ["name"], html: '<h3>'+ HELP.sanitizeHTML(planName) +'</h3>'}),
-                            $('<div>', {class: ["status"], html: '<strong>Status:</strong> '+item['status']}),
+                            $('<div>', {class: ["status"], html: '<strong>Status:</strong> '+ statusLabel}),
                             $('<div>', {
                                 class: ["amount"],
                                 html:
