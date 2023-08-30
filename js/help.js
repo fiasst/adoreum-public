@@ -428,8 +428,6 @@ HELP = (function($, window, document, undefined) {
         // Add metadata to formData:
         pub.ajaxMetaValues(formData, 'formData');
 
-        console.log('formData', formData);
-
         if (type == 'formData') {
             return formData;
         }

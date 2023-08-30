@@ -77,10 +77,16 @@ var BILLING = (function($, window, document, undefined) {
               
                 $('.link-cancel').on('click', function(e) {
                     e.preventDefault();
+                    var $link = $(this),
+                        msg = HELP.sanitizeHTML($link.attr('data-confirm'));
+
+                    if (msg && !confirm(msg)) {
+                        return false;
+                    }
                     MAIN.thinking(true, false);
                     
                     HELP.sendAJAX({
-                        url: $(this).attr('href'),
+                        url: $link.attr('href'),
                         data: HELP.ajaxMetaValues(),
                         method: "GET",
                         callbackSuccess: function(data) {

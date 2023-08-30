@@ -34,7 +34,7 @@ var FORMS = (function($, window, document, undefined) {
             }
         });
 
-
+        
         //
         //  General AJAX form submit handler.
         //
@@ -46,7 +46,8 @@ var FORMS = (function($, window, document, undefined) {
                 e.preventDefault();
                 var $form = $(this),
                     $button = $form.find('.form-submit.clicked'),
-                    validation = $form.attr('data-validation');
+                    validation = $form.attr('data-validation'),
+                    dataType = $form.attr('data-form-values-type');
 
                 // Custom form validation.
                 if (validation && !HELP.callNestedFunction(validation)) {
@@ -57,19 +58,22 @@ var FORMS = (function($, window, document, undefined) {
                     return false;
                 }
 
-                var data = HELP.getFormValues($form),
+                var data = HELP.getFormValues($form, dataType),
                     formIncrement = HELP.getCookie('form-valid'),
                     i = 2;
 
                 formIncrement = !!formIncrement ? Number(formIncrement) : 0;
-                data.increment = ++formIncrement;
-                HELP.setCookie('form-valid', data.increment);
+                formIncrement = ++formIncrement;
 
-                MAIN.buttonThinking($button);
-                MAIN.thinking(true, false);
-                console.log(data);
+                if (dataType == 'formData') {
+                    data.set('increment', formIncrement);
+                }
+                else {
+                    data.increment = formIncrement;
+                }
+                HELP.setCookie('form-valid', formIncrement);
 
-                HELP.sendAJAX({
+                var ajaxParams = {
                     url: $form.attr('action'),
                     method: $form.attr('method'),
                     data: data,
@@ -82,7 +86,19 @@ var FORMS = (function($, window, document, undefined) {
                         MAIN.thinking(false);
                         console.log('error');
                     }
-                }, $form);
+                };
+                // File upload fields break the JS without these settings.
+                if (dataType == 'formData') {
+                    ajaxParams.processData = false;
+                    ajaxParams.contentType = false;
+                    ajaxParams.cache = false;
+                }
+
+                MAIN.buttonThinking($button);
+                MAIN.thinking(true, false);
+                console.log('data: ', ajaxParams.data);
+
+                HELP.sendAJAX(ajaxParams, $form);
             });
 
 
