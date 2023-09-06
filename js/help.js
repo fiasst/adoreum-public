@@ -100,7 +100,7 @@ HELP = (function($, window, document, undefined) {
     //
     //
     pub.getEnvType = function() {
-        return location.hostname.indexOf('webflow') > -1 ? 'dev' : 'live';
+        return location.hostname.indexOf('webflow') > -1 ? 'test' : 'live';
     };
 
 
