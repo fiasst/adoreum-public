@@ -32,6 +32,15 @@ var FORMS = (function($, window, document, undefined) {
 
 
         //
+        // Add "env" value to register form to set a Custom Field on Member.
+            // This lets Make know what scenario route to take (dev or live) for limited info
+            // Triggers such as "Member Added Plan". These can contain Stripe modules with Dev/Live
+            // connection keys and a Router is needed to know which Stripe connection to use.
+        //
+        $('form.form-register input[name="env"]').val( HELP.getEnvType() );
+
+
+        //
         // Redirect user after form submit.
         //
         const queryDest = HELP.getSetQuerystring('dest');
@@ -185,7 +194,7 @@ var FORMS = (function($, window, document, undefined) {
 
 
         //
-        // Must appear before the createSelect2() call.
+        // Populate select fields with Collection List item values.
         //
         $('.select-list-options').buildSelectOptions();
 
