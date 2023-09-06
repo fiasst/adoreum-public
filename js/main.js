@@ -336,8 +336,21 @@ var MAIN = (function($, window, document, undefined) {
         //
         $(document).on('click', '.link-dashboard', function(e) {
             e.preventDefault();
-            if (HELP.checkKeyExists(USER, "current.loginRedirect")) {
-                window.location.href = USER.current.loginRedirect;
+            if (HELP.checkKeyExists(USER, "current")) {
+                var redir =  USER.current.loginRedirect;
+
+                if (!!redir && redir != '/') {
+                    window.location.href = redir;
+                }
+                else {
+                    // If loginRedirect isn't set, the user has probably just joined and
+                    // Make hasn't finished updating the MS object before the page loaded.
+                    // User the ID portion of the Member ID, since we use that for a Slug.
+                    var id = USER.current.id.split('_').slice(-1);
+                    if (!!id) {
+                        window.location.href = '/dashboard/'+ id;
+                    }
+                }
             }
         });
 
