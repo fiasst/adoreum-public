@@ -281,7 +281,7 @@ var MAIN = (function($, window, document, undefined) {
         //
         // General Litbox trigger handler.
         //
-        $('.trigger-lbox').on('click', function(e) {
+        $(document).on('click', '.trigger-lbox', function(e) {
             e.preventDefault();
 
             // Open Litbox.
