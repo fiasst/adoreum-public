@@ -29,7 +29,7 @@ var BILLING = (function($, window, document, undefined) {
                     var planName = MAIN.planNames[item['planId']] || 'Subscription',
                         payment = item['payment'],
                         currencySymbol = HELP.getCurrencySymbol('en-US', payment.currency),
-                        cancelLink = nextBillDate = lastBillDate = null,
+                        links = nextBillDate = lastBillDate = null,
                         statusLabel = item.status;
 
                     // If plan has been cancelled but is still active until expiry date.
@@ -46,11 +46,20 @@ var BILLING = (function($, window, document, undefined) {
                     if (item['status'] == "ACTIVE" || item['status'] == "TRIALING") {
                         hasActiveSubscription = true;
 
-                        cancelLink = $('<a>', {
-                            'href': '#',
-                            'text': 'Manage subscription',
-                            'class': 'trigger-customer-portal link-grey'
-                        });
+                        links = $('<div class="links actions" />')
+                            .append(
+                                $('<a>', {
+                                    'href': '#',
+                                    'text': 'Manage subscription',
+                                    'class': 'trigger-customer-portal link-grey'
+                                }),
+                                $('<a>', {
+                                    'href': '#cancel',
+                                    'text': 'Looking to cancel?',
+                                    'data-title': 'Looking to cancel your membership',
+                                    'class': 'trigger-lbox link-grey'
+                                })
+                            );
                     }
 
                     subscriptionPlans.push(
@@ -65,7 +74,7 @@ var BILLING = (function($, window, document, undefined) {
                             }),
                             nextBillDate,
                             lastBillDate,
-                            cancelLink
+                            links
                         )
                     );
                 });

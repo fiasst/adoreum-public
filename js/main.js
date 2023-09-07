@@ -279,6 +279,20 @@ var MAIN = (function($, window, document, undefined) {
 
 
         //
+        // General Litbox trigger handler.
+        //
+        $('.trigger-lbox').on('click', function(e) {
+            e.preventDefault();
+
+            // Open Litbox.
+            pub.openLitbox({
+                title: $(this).attr('data-title'),
+                href: $(this).attr('href')
+            });
+        });
+
+
+        //
         // Accordions.
         //
         $('.accordion').on('click', '.accordion-header', function() {
