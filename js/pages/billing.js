@@ -56,8 +56,9 @@ var BILLING = (function($, window, document, undefined) {
                                 $('<a>', {
                                     'href': '#cancel',
                                     'text': 'Looking to cancel?',
-                                    'data-title': 'Looking to cancel your membership',
-                                    'class': 'trigger-lbox link-grey'
+                                    'data-title': 'We\'ll be sorry to see you go',
+                                    'class': 'trigger-lbox link-grey',
+                                    'data-ms-content': '!is-trialing'
                                 })
                             );
                     }

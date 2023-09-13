@@ -187,11 +187,12 @@ HELP = (function($, window, document, undefined) {
     // Convert a date-time String into a Timestamp.
     //
     // Expected dateString parts order to be: "DD-MM-YYYY HH:MM:SS".
-    // Date can be separated by /, - or spaces.
+        // Unless "usaFormat" is TRUE, then it's: "MM-DD-YYYY HH:MM:SS".
+    // Date can be separated by / - or spaces.
     // Ex: dateString = "23/08/2023, 04:53:34";
     //
-    pub.getTimestamp = (dateString, localTimezone) => {
-        let date,
+    pub.getTimestamp = (dateString, localTimezone, usaFormat) => {
+        let date = new Date(),
             lang = pub.getCurrentLang(),
             options = {};
 
@@ -203,13 +204,13 @@ HELP = (function($, window, document, undefined) {
             let lastSpaceIndex = dateString.lastIndexOf(" "),
                 dateStr = dateString.substring(0, lastSpaceIndex),
                 timeStr = dateString.substring(lastSpaceIndex + 1),
-                dateParts = dateStr.replace(/[-\/\s]/g, "||").split('||');
-                date = new Date();
+                dateParts = dateStr.replace(/[-\/\s]/g, "||").split('||'),
+                monthIndex = usaFormat ? 0 : 1;
 
             // Convert month. Ex: from 08 to "Aug" (short names).
-            date.setMonth(dateParts[1] -1);
+            date.setMonth(dateParts[monthIndex] - 1);
             options.month = 'short';
-            dateParts[1] = date.toLocaleString(lang, options);
+            dateParts[monthIndex] = date.toLocaleString(lang, options);
 
             // Rebuild as: 23 Aug 2023 04:53:34.
             // May still contain a comma but thats ok.
@@ -229,7 +230,10 @@ HELP = (function($, window, document, undefined) {
             minute: "numeric",
             second: "numeric"
         });
-        date = new Date(Date.parse(dateString + " GMT")).toLocaleString(lang, options);
+        // date = new Date(Date.parse(dateString)).toLocaleString(lang, options);
+        let daylightSaving = localTimezone ? 0 : date.getTimezoneOffset()*60*1000;
+        date = new Date(Date.parse(dateString) + daylightSaving).toLocaleString(lang, options);
+
         return Date.parse(date);
     };
     
