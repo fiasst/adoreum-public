@@ -168,22 +168,23 @@ var MAIN = (function($, window, document, undefined) {
         if (btn.length < 1) return false;
 
         if (!revert) {
+            // Disable the button.
             btn.attr('disabled', true).addClass('thinking');
             if (btn.get(0).nodeName == 'BUTTON') {
-                btn.data('dataValue', btn.text()).text(btn.attr('data-wait'));
+                btn.attr('data-value', btn.text()).text(btn.attr('data-wait'));
             }
             else {
-                btn.data('dataValue', btn.attr('value')).attr('value', btn.attr('data-wait'));
+                btn.attr('data-value', btn.attr('value')).attr('value', btn.attr('data-wait'));
             }
         }
         else {
             // Revert the button back to initial state.
             btn.removeAttr('disabled').removeClass('thinking clicked');
             if (btn.get(0).nodeName == 'BUTTON') {
-                btn.text(btn.data('dataValue'));
+                btn.text(btn.attr('data-value'));
             }
             else {
-                btn.attr('value', btn.data('dataValue'));
+                btn.attr('value', btn.attr('data-value'));
             }
         }
     };
