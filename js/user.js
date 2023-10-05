@@ -33,7 +33,7 @@ USER = (function($, window, document, undefined) {
         HELP.waitFor(window, "$memberstackDom", 50, function() {
             $memberstackDom.launchStripeCustomerPortal();
         });
-    }
+    };
 
 
     //
@@ -48,51 +48,27 @@ USER = (function($, window, document, undefined) {
 
 
     //
-    // get the current Member then fire callback function.
+    // Get the current Member then fire callback function.
     //
     pub.getCurrentMember = function(callback) {
         USER.current = USER.current || pub.current;
 
         if (HELP.checkKeyExists(USER, 'current.id')) {
+            // Fire callback.
+            if (!!callback){
+                callback(USER.current);
+                return;
+            }
+            // Return member object.
             return USER.current;
         }
         HELP.waitFor(window, "$memberstackDom", 50, function() {
-            window.$memberstackDom.getCurrentMember().then(({ data: member }) => {
+            $memberstackDom.getCurrentMember().then(({ data: member }) => {
                 member = member || {};
                 pub.updateCurrentUser(member);
 
                 if (!!callback) callback(USER.current);
                 return USER.current;
-            });
-        });
-    };
-    
-
-    //
-    // get Member's JSON then fire callback function.
-    //
-    pub.getMemberJSON = function(callback) {
-        HELP.waitFor(window, "$memberstackDom", 50, function() {
-            window.$memberstackDom.getMemberJSON().then(({ data: memberJSON }) => {
-                memberJSON = memberJSON || {};
-
-                if (!!callback) callback(memberJSON);
-                return memberJSON;
-            });
-        });
-    };
-
-
-    //
-    // update Member's JSON.
-    //
-    pub.updateMemberJSON = function(json, callback) {
-        HELP.waitFor(window, "$memberstackDom", 50, function() {
-            window.$memberstackDom.updateMemberJSON({ json: json }).then(({ data: memberJSON }) => {
-                memberJSON = memberJSON || {};
-
-                if (!!callback) callback(memberJSON);
-                return memberJSON;
             });
         });
     };

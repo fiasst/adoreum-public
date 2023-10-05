@@ -82,7 +82,6 @@ var BILLING = (function($, window, document, undefined) {
 
                 if (subscriptionPlans.length > 0) {
                     $('#subscriptions').append(subscriptionPlans);
-                    // $('#banner-sub-join').toggleClass('hide', hasActiveSubscription);
                 }
             }
         });

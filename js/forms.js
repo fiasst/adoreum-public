@@ -47,115 +47,163 @@ var FORMS = (function($, window, document, undefined) {
 
         
         //
-        //  General AJAX form submit handler.
+        // Bouncer FE form validation.
+        //
+        // Add Bouncer form validation error placeholder for fields.
+        //
+        var bouncerFieldIndex = 0;
+        $('.bouncer .input-wrapper').each(function(i, el) {
+            var id = 'error-wrapper-'+ bouncerFieldIndex++;
+            
+            $(el).append( $('<div class="error-wrapper" id="'+ id +'" />') )
+                .find(':input').attr('data-bouncer-target', '#'+ id)
+        });
+
+        //
+        // Bouncer site-wide form validation.
+            // Works for all forms with a ".bouncer" class.
+        //
+        var bouncer = new Bouncer('form.bouncer', {
+            fieldClass: 'error',// Applied to fields with errors
+            errorClass: 'error-text',// Applied to the error message for invalid fields
+            fieldPrefix: 'bouncer-field_',
+            errorPrefix: 'bouncer-error_',
+            disableSubmit: true,
+            messages: {
+                missingValue: {
+                    checkbox: 'This field is required',
+                    radio: 'Please select an option',
+                    select: 'Please select an option',
+                    'select-multiple': 'Please select one or more options',
+                    default: 'This field is required'
+                },
+                patternMismatch: {
+                    email: 'Please enter a valid email address',
+                    url: 'Please enter a valid URL (Example: http://example.com)',
+                    number: 'Please enter a number',
+                    color: 'Please match the following format: #rrggbb',
+                    date: 'Please use the YYYY-MM-DD format',
+                    time: 'Please use the 24-hour time format (Example: 23:00)',
+                    month: 'Please use the YYYY-MM format (Example: 2065-08)',
+                    default: 'Please enter a value in the required format'
+                },
+                outOfRange: {
+                    over: 'Value must not exceed {max} characters',
+                    under: 'Value must not be lower than {min} characters'
+                },
+                // This uses the "maxlength" attr.
+                wrongLength: {
+                    over: 'Value must not exceed {maxLength} characters',
+                    under: 'Value must not be lower than {minLength} characters'
+                },
+                fallback: 'There was an error with this field'
+            }
+        });
+
+        $(document)
+        // Event listener for when a field is invalid/valid.
+        .on('bouncerShowError bouncerRemoveError', function(e) {
+            // Add and remove an error class on the field wrapper.
+            $(e.target).parents('.input-wrapper').toggleClass('error',
+            (e.type == 'bouncerShowError'));
+        })
+        // Form is valid event listener.
+        .on('bouncerFormValid', function(e) {
+            // Form is valid so submit it.
+            ajaxSubmitHandler(e);
+        });
+
+        //
+        // AJAX Form submit listener.
+            // If you want to AJAX submit a form without Bouncer.js
+            // add this class to a form.
+        // Otherwise, add ".bouncer" class and ajaxSubmitHandler()
+            // gets called when the form validates.
         //
         $('.ajax-submit')
-            .on('click', '.form-submit', function(e) {
-                $(e.target).addClass('clicked');
-            })
-            .on('submit', function(e) {
-                e.preventDefault();
-                var $form = $(this),
-                    $button = $form.find('.form-submit.clicked'),
-                    validation = $form.attr('data-validation'),
-                    dataType = $form.attr('data-form-values-type');
+        .on('click', '.form-submit', function(e) {
+            $(e.target).addClass('clicked');
+        })
+        .on('submit', function(e) {
+            e.preventDefault();
+            // Submit form via AJAX.
+            ajaxSubmitHandler(e);
+        });
 
-                // Custom form validation.
-                if (validation && !HELP.callNestedFunction(validation)) {
-                    // Validation function retured false.
-                    console.log('Validation failed');
-                    MAIN.buttonThinking($button, true);
-                    // Don't proceed.
-                    return false;
+
+        //
+        // AJAX form submit logic.
+            // Used by ".form-submit" and ".bouncer" forms.
+        //
+        const ajaxSubmitHandler = (event) => {
+            var $form = $(event.target),
+                $button = $form.find('.form-submit.clicked'),
+                validation = $form.attr('data-validation'),
+                dataType = $form.attr('data-form-values-type');
+
+            // Custom form validation.
+            if (validation && !HELP.callNestedFunction(validation)) {
+                // Validation function retured false.
+                console.log('Validation failed');
+                MAIN.buttonThinking($button, true);
+                // Don't proceed.
+                return false;
+            }
+
+            var data = HELP.getFormValues($form, dataType),
+                formIncrement = HELP.getCookie('form-valid'),
+                i = 2;
+
+            formIncrement = !!formIncrement ? Number(formIncrement) : 0;
+            formIncrement = ++formIncrement;
+
+            if (dataType == 'formData') {
+                data.set('increment', formIncrement);
+            }
+            else {
+                data.increment = formIncrement;
+            }
+            HELP.setCookie('form-valid', formIncrement);
+
+            var ajaxParams = {
+                url: $form.attr('action'),
+                method: $form.attr('method'),
+                data: data,
+                timeout: 120000,
+                callbackSuccess: function(data) {
+                    MAIN.thinking(false);
+                    MAIN.handleAjaxResponse(data, $form);
+                },
+                callbackError: function(data) {
+                    MAIN.thinking(false);
+                    console.log('error');
                 }
+            };
+            // File upload fields break the JS without these settings.
+            if (dataType == 'formData') {
+                ajaxParams.processData = false;
+                ajaxParams.contentType = false;
+                ajaxParams.cache = false;
+            }
 
-                var data = HELP.getFormValues($form, dataType),
-                    formIncrement = HELP.getCookie('form-valid'),
-                    i = 2;
+            MAIN.buttonThinking($button);
+            MAIN.thinking(true, false);
+            console.log('data: ', ajaxParams.data);
 
-                formIncrement = !!formIncrement ? Number(formIncrement) : 0;
-                formIncrement = ++formIncrement;
-
-                if (dataType == 'formData') {
-                    data.set('increment', formIncrement);
-                }
-                else {
-                    data.increment = formIncrement;
-                }
-                HELP.setCookie('form-valid', formIncrement);
-
-                var ajaxParams = {
-                    url: $form.attr('action'),
-                    method: $form.attr('method'),
-                    data: data,
-                    timeout: 120000,
-                    callbackSuccess: function(data) {
-                        MAIN.thinking(false);
-                        MAIN.handleAjaxResponse(data, $form);
-                    },
-                    callbackError: function(data) {
-                        MAIN.thinking(false);
-                        console.log('error');
-                    }
-                };
-                // File upload fields break the JS without these settings.
-                if (dataType == 'formData') {
-                    ajaxParams.processData = false;
-                    ajaxParams.contentType = false;
-                    ajaxParams.cache = false;
-                }
-
-                MAIN.buttonThinking($button);
-                MAIN.thinking(true, false);
-                console.log('data: ', ajaxParams.data);
-
-                HELP.sendAJAX(ajaxParams, $form);
-            });
+            HELP.sendAJAX(ajaxParams, $form);
+        };
 
 
         //
         // Form fields: Populate field's default values with inline attribute's value.
         //
-        $(':input[data-default-value]').each(function() {
-            var $el = $(this),
-                val = $el.attr('data-default-value');
-
-            if (!$el.val()) {
-                // Remove non-number characters from value so it can be set as a value.
-                if ($el.attr('type') == 'number') val = HELP.removeNonNumeric(val);
-                $el.val( HELP.sanitizeHTML(val) );
-            }
-        });
-
+        $(':input[data-default-value]').inputAttrDefaultValue();
+        
 
         //
         // Form fields: Populate field's default values with sibling DIV's content.
         //
-        $('.input-default-value').each(function() {
-            var $el = $(this),
-                text = $el.text(),
-                $input = $el.parent().find(':input'),
-                type = $input.eq(0).attr('type');
-
-            if (type == 'checkbox' || type == 'radio') {
-                $input.each(function() {
-                    var $customInput = $(this).siblings(`.w-${type}-input`),
-                        // If text of the .input-default-value matches the radio's value.
-                        bool = !!text && text == $(this).val();
-
-                    if (type == 'checkbox') {
-                        // bool value can either be empty, for non-Switch WF fields
-                        //or "true/false" (String), for Switch WF fields.
-                        bool = !!text && text !== "false";
-                    }
-                    // Update radio/checkbox state.
-                    pub.toggleCustomInputField($customInput, $(this), bool);
-                });
-            }
-            else if (!$input.val()) {
-                $input.val( HELP.stripHTMLWithLinebreaks($el.html()) );
-            }
-        });
+        $('.input-default-value').inputDefaultValue();
 
 
         //
@@ -185,30 +233,19 @@ var FORMS = (function($, window, document, undefined) {
 
 
         //
+        // Format DOB and other date fields on key press.
+        //
+        $('.format-ddmmyyyy').on('keyup', function(e) {
+            if (e && !(e.key == 'Backspace' || e.key == 'Delete')) {
+                $(this).val( HELP.formatDDMMYYYY($(this).val()) );
+            }
+        });
+
+
+        //
         // Populate select fields with Collection List item values.
         //
         $('.select-list-options').buildSelectOptions();
-
-
-        //
-        // Register form validation.
-        //
-        HELP.waitFor(window.jQuery.fn, "validate", 400, function() {
-            $('#wf-form-Register-Form').validate({
-                rules: {
-                    email: {
-                        required: true,
-                        email: true
-                    }
-                },
-                messages: {
-                    email: {
-                        required: "Email is required",
-                        email: "Must be a valid email address"
-                    }
-                }
-            });
-        });
     });
 
     return pub;
@@ -219,6 +256,66 @@ var FORMS = (function($, window, document, undefined) {
 //
 // Extend jQuery.
 //
+
+//
+// Form fields: Populate field's default values with inline attribute's value.
+//
+$.fn.inputAttrDefaultValue = function() {
+    $(this).each(function() {
+        var $el = $(this),
+            val = $el.attr('data-default-value');
+
+        if (!$el.val()) {
+            // Remove non-number characters from value so it can be set as a value.
+            if ($el.attr('type') == 'number') {
+                val = HELP.removeNonNumeric(val);
+            }
+            $el.val(HELP.sanitizeHTML(val)).trigger('change');
+        }
+    })
+};
+
+
+//
+// Form fields: Populate field's default values with sibling DIV's content.
+//
+$.fn.inputDefaultValue = function() {
+    $(this).each(function() {
+        var $el = $(this),
+            text = $el.text(),
+            $input = $el.parents('.input-wrapper').find(':input'),
+            type = $input.eq(0).attr('type');
+
+        if (type == 'checkbox' || type == 'radio') {
+            $input.each(function() {
+                var $customInput = $(this).siblings(`.w-${type}-input`),
+                    // If text of the .input-default-value matches the radio's value.
+                    bool = !!text && text == $(this).val();
+
+                if (type == 'checkbox') {
+                    // bool value can either be empty, for non-Switch WF fields
+                    //or "true/false" (String), for Switch WF fields.
+                    bool = !!text && text !== "false";
+                }
+                // Update radio/checkbox state.
+                FORMS.toggleCustomInputField($customInput, $(this), bool);
+            });
+        }
+        else if (!$input.val()) {
+            if ($input.hasClass('editor')) {
+                // Add raw HTML to input (textarea.editor).
+                $input.val($el.html());
+            }
+            else {
+                // Add basic text with newlines.
+                $input.val( HELP.stripHTMLWithLinebreaks($el.html()) );
+            }
+            $input.trigger('change');
+        }
+    });
+};
+
+
 //
 // Form fields: Populate select with option elements built from WF Collection List data.
 //

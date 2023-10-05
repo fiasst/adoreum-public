@@ -16,21 +16,23 @@ var MAIN = (function($, window, document, undefined) {
     // Show or remove content based on conditions.
     //
     pub.controlHTML = function($elements, display) {
-        if (display) {
-            $elements.each(function() {
-                var $el = $(this);
-
+        $elements.each(function() {
+            var $el = $(this);
+            
+            // Show.
+            if (display) {
                 if ($el.hasClass('hide')) {
                     $el.removeClass('hide');
                 }
                 else {
                     $el.show();
                 }
-            });
-        }
-        else {
-            $elements.remove();
-        }
+            }
+            // Remove.
+            else {
+                $el.remove();
+            }
+        });
     };
 
 
@@ -79,6 +81,11 @@ var MAIN = (function($, window, document, undefined) {
     pub.dialog = function(data) {
         if (HELP.checkKeyExists(data, "mode")) {
             switch (data.mode) {
+                case 'alert':
+                    // Need to sanitize this...
+                    // alert(HELP.sanitizeHTML(data.message));
+                    break;
+
                 case 'banner':
                     // Nothing to see yet.
                     break;
@@ -296,18 +303,8 @@ var MAIN = (function($, window, document, undefined) {
         //
         // Accordions.
         //
-        $('.accordion').on('click', '.accordion-header', function() {
+        $(document).on('click', '.accordion-header', function() {
             $(this).parent().toggleClass('active').find('.accordion-content').toggleClass('active');
-        });
-
-
-        //
-        // Format DOB and other date fields on key press.
-        //
-        $('.format-ddmmyyyy').on('keyup', function(e) {
-            if (e && !(e.key == 'Backspace' || e.key == 'Delete')) {
-                $(this).val( HELP.formatDDMMYYYY($(this).val()) );
-            }
         });
 
 
@@ -316,7 +313,7 @@ var MAIN = (function($, window, document, undefined) {
         //
         $('.alert-confirm').on('click.alertConfirm', function(e) {
             var msg = HELP.sanitizeHTML($(this).attr('data-confirm'));
-            if (!!(msg)) {
+            if (msg) {
                 e.preventDefault();
               
                 if (confirm(msg)) {

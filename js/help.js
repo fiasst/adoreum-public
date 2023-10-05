@@ -21,7 +21,8 @@ HELP = (function($, window, document, undefined) {
 
 
     //
-    //
+    // Remove <script> tags and any attributes that start with 'on' (onclick, etc).
+        // This helps to guards against XSS attack.
     //
     pub.sanitizeHTML = (str, allowedTags) => {
         if (!str) return;
@@ -50,8 +51,6 @@ HELP = (function($, window, document, undefined) {
             .replace(/<.*?script.*?>|.constructor|document.cookie|document.domain/gi, '')
             // Remove substrings that start with "on" (event attributes. ex: "onclick").
             .replace(/<[^>]*\s+[^>]*on\w+[^>]*>/gi, '')
-            // Remove "\\\on" (event attributes that start with a backslash).
-            .replace(/<[^>]*(?:\\{2})*on\w+/gi, '')
             // Remove instances of "javascript:", "script:" (for "ascript:") or &{ (for "& JS includes").
             .replace(/javascript.*?:|script.*?:|&{/gi, '')
             // Remove "script:" decimal HTML Characters (&#0000099 or &#99. semicolon optional).
@@ -137,28 +136,45 @@ HELP = (function($, window, document, undefined) {
     //
     // Get $£€ etc symbols.
     //
-    pub.getCurrencySymbol = (locale, currency) => (0).toLocaleString(locale, { style: 'currency', currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(/\d/g, '').trim();
-
-
-    //
-    // Get/set querystring.
-    //
-    pub.getSetQuerystring = (params = '', includePath) => {
-        const urlObj = new URL(window.location.href);
-
-        // Set params.
-        if (typeof(params) === "object") {
-            $.each(params, function(key, value) {
-                urlObj.searchParams.set(
-                    pub.sanitizeHTML(key), pub.sanitizeHTML(value)
-                );
-            });
-            // Return path and querystring or just the string.
-            return includePath ? urlObj.pathname + urlObj.search : urlObj.search;
-        }
-        // Get value.
-        return pub.sanitizeHTML( urlObj.searchParams.get( params.toString() ));
+    pub.getCurrencySymbol = (locale, currency) => {
+        return (0).toLocaleString(locale, {
+            style: 'currency', currency, minimumFractionDigits: 0, maximumFractionDigits: 0
+        }).replace(/\d/g, '').trim();
     };
+
+
+    //
+        // Get/set querystring.
+        //
+        // "url": Provide the current URL or link href to update an existing querystring.
+        pub.getSetQuerystring = (params = '', type = 'relative', url = window.location.href) => {
+            // "url" param must be absolute or it will error.
+            url = url.indexOf('://') < 0 ? window.location.origin + url : url;
+            let urlObj = new URL(url);
+
+            // Set params.
+            if (typeof params === "object") {
+                // Iterate through new parameters and append them to the existing ones.
+                for (let [key, value] of Object.entries(params)) {
+                    let sanitizedKey = pub.sanitizeHTML(key),
+                        sanitizedValue = pub.sanitizeHTML(value);
+                    
+                    // Append the new key-value pair to the existing query parameters.
+                    urlObj.searchParams.append(sanitizedKey, sanitizedValue);
+                }
+                // Return an absolute URL, relative URI + querystring or just qstring.
+                switch (type) {
+                    case 'absolute':
+                        return urlObj.origin + urlObj.pathname + urlObj.search;
+                    case 'relative':
+                        return urlObj.pathname + urlObj.search;
+                    case 'query':
+                        return urlObj.search;
+                }
+            }
+            // Get value.
+            return pub.sanitizeHTML(urlObj.searchParams.get(params.toString()));
+        };
 
 
     //
@@ -272,7 +288,7 @@ HELP = (function($, window, document, undefined) {
         return pub.checkKeyExists(obj[ keys.shift() ], keys);
     };
 
-
+    
     //
     // Get a value from a flat or deep (nested) Object.
     //
@@ -282,6 +298,7 @@ HELP = (function($, window, document, undefined) {
 
         for (let i = 0; i < keys.length; i++) {
             value = value[keys[i]];
+
             if (value === undefined || value === null) return null;
         }
         return value;
@@ -320,6 +337,7 @@ HELP = (function($, window, document, undefined) {
     };
 
 
+    //
     // Useful for filtering an Array of businesses Objects to only state.active ones.
         // or, for filtering out member plans without a status of ACTIVE or TRIALING.
     //
@@ -397,6 +415,9 @@ HELP = (function($, window, document, undefined) {
         obj.env = pub.getEnvType();
         obj.url = pub.getCurrentDomain();
 
+        // Language.
+        obj.language = pub.getCurrentLang();
+
         // Add submitted date/time value.
         obj.submitted = pub.getISOdate();
         obj.submittedTimestamp = pub.getTimestamp();
@@ -425,7 +446,7 @@ HELP = (function($, window, document, undefined) {
             
             // Re-build multi-select values.
             if ($element.is('select[multiple]')) {
-                formData.set(key, $element.val());
+                formData.set(key, value);
             }
             // Check if checkbox name ends with [].
             else if ($element.is(':checkbox:checked') && key.endsWith('[]')) {
@@ -445,6 +466,9 @@ HELP = (function($, window, document, undefined) {
 
         // Add metadata to formData:
         pub.ajaxMetaValues(formData, 'formData');
+
+        // Debug:
+        console.log(Object.fromEntries(formData));
 
         if (type == 'formData') {
             return formData;
