@@ -43,7 +43,7 @@ var BILLING = (function($, window, document, undefined) {
                     if (payment.lastBillingDate) {
                         lastBillDate = $('<div>', {class: ["bill-last"], html: '<strong>Last billed:</strong> '+ HELP.formatTimestamp(payment.lastBillingDate) });
                     }
-                    if (item['status'] == "ACTIVE" || item['status'] == "TRIALING") {
+                    if (['ACTIVE', 'TRIALING', 'REQUIRES_PAYMENT'].includes(item['status'])) {
                         hasActiveSubscription = true;
 
                         links = $('<div class="links actions" />')
