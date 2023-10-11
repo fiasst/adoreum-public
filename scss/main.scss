@@ -51,7 +51,6 @@ textarea {
 
 
 
-
 /*
 *
 * LitBox.
@@ -63,6 +62,18 @@ textarea {
     width: 100%;
   }
 }
+
+
+
+/*
+*
+* Memberstack.
+*
+*/
+.ms-modal__footer {
+  display: none;
+}
+
 
 
 /*

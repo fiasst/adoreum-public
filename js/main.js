@@ -202,10 +202,10 @@ var MAIN = (function($, window, document, undefined) {
     //
     pub.replaceTextWithMetadata = function(metadata) {
         $('[data-ms-member-meta]').each(function() {
-            var data = $(this).attr('data-ms-member-meta');
+            var data = HELP.sanitizeHTML($(this).attr('data-ms-member-meta'));
 
             if (HELP.checkKeyExists(metadata, data)) {
-                $(this).html(HELP.sanitizeHTML(metadata[data]));
+                $(this).text(metadata[data]);
             }
         });
     };
