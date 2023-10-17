@@ -149,6 +149,12 @@ textarea {
   margin-bottom: 96px !important;
 }
 
+// Hide certain elements on Live site. This is a safety feature in case a .hide
+// class is omitted by mistake. For example after editing the Job Review form, etc...
+body .hide-live {
+  display: none !important;
+}
+
 .hide {
   /*
   * You cant put !important on .hide elements beause memberstack's
