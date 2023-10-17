@@ -22,6 +22,9 @@ select {
   background-position: right .8rem top 55%;
   padding-right: 1.8rem;
 }
+select[multiple] {
+  background-image: none;
+}
 
 textarea {
   resize: vertical;
