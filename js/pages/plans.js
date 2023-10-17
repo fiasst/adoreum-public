@@ -15,7 +15,7 @@ var PLANS = (function($, window, document, undefined) {
             var type = $(this).attr('data-plan-frequency'),
                 $elements = $('.matrix-plan [data-plan-frequency]');
 
-            $('.switch', $frequency).toggleClass('end', (type == 'yearly'));
+            $('.switch', $frequency).toggleClass('end', (type == 'monthly'));
             $('.switch-label', $frequency).removeClass('active');
             $(this).addClass('active');
 
