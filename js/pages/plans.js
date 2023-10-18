@@ -23,6 +23,23 @@ var PLANS = (function($, window, document, undefined) {
                 return $(this).attr('data-plan-frequency') == type;
             }).removeClass('hide');
         });
+
+
+        //
+        // Agree to plan terms in order to subscribe.
+        //
+        $('.terms-agree').each(function() {
+            $(this)
+                .on('change', 'input[type="checkbox"]', function(e) {
+                    $('.button-cover', $(e.target).parents('.terms-agree')).toggle(!$(e.target).is(':checked'));
+                })
+                .on('click', '.button-cover', function(e) {
+                    if (!$(this).find('checkbox').is(':checked')) {
+                        alert('Please read the agreement in full and confirm that you agree by checking the box at the bottom.')
+                    }
+                });
+        });
+        $('.terms-agree .button-cover').css('cursor', 'pointer');
     });
 
 
