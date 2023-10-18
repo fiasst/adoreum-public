@@ -29,6 +29,10 @@ var PLANS = (function($, window, document, undefined) {
         // Agree to plan terms in order to subscribe.
         //
         $('.terms-agree').each(function() {
+            $('input[type="checkbox"]', this).each(function() {
+                // Uncheck the boxes (in case of page refresh).
+                $(this).prop('checked', false);
+            });
             $(this)
                 .on('change', 'input[type="checkbox"]', function(e) {
                     $('.button-cover', $(e.target).parents('.terms-agree')).toggle(!$(e.target).is(':checked'));
