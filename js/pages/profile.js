@@ -6,7 +6,6 @@ var PROFILE = (function($, window, document, undefined) {
         //
         // Motive and Diet fields.
         //
-        // Change listener.
         $('#field-motive, #field-diet').on('change', function() {
             // Filter multi-select options.
             var selected = $("option:selected", this).filter(function() {
@@ -15,6 +14,19 @@ var PROFILE = (function($, window, document, undefined) {
                 field = ($(this).attr('id') == 'field-motive') ? 'motive' : 'diet';
 
             $(`#${field}-other-wrapper`).toggleClass('hide', (selected.length < 1));
+        })
+        // Init.
+        .trigger('change');
+
+
+
+        //
+        // Handle MS "Custom Field" Select fields.
+        //
+        $('.form-register select').on('change', function() {
+            // Filter multi-select options.
+            var val = $(this).is('select[multiple]') ? $(this).val().join('|') : $(this).val();
+            $(this).parent().find('.input-custom-field').val(val);
         })
         // Init.
         .trigger('change');
