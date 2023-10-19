@@ -4,29 +4,17 @@ var PROFILE = (function($, window, document, undefined) {
 
     $(function() {
         //
-        // Motive field.
+        // Motive and Diet fields.
         //
         // Change listener.
-        $('#field-motive').on('change', function() {
+        $('#field-motive, #field-diet').on('change', function() {
             // Filter multi-select options.
             var selected = $("option:selected", this).filter(function() {
                     return $(this).text() === "Other";
-                });
+                }),
+                field = ($(this).attr('id') == 'field-motive') ? 'motive' : 'diet';
 
-            $('#motive-other-wrapper').toggleClass('hide', (selected.length < 1));
-        })
-        // Init.
-        .trigger('change');
-
-
-        //
-        // Diet field.
-        //
-        // Change listener.
-        $('#field-diet').on('change', function() {
-            var selected = $("option:selected", this).text() == "Other";
-
-            $('#diet-other-wrapper').toggleClass('hide', !selected);
+            $(`#${field}-other-wrapper`).toggleClass('hide', (selected.length < 1));
         })
         // Init.
         .trigger('change');

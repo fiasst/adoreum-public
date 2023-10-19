@@ -1,0 +1,1 @@
+var PROFILE=function($,t,e,i){return $((function(){$("#field-motive, #field-diet").on("change",(function(){var t=$("option:selected",this).filter((function(){return"Other"===$(this).text()})),e="field-motive"==$(this).attr("id")?"motive":"diet";$(`#${e}-other-wrapper`).toggleClass("hide",t.length<1)})).trigger("change")})),{}}(jQuery,0,this.document);
