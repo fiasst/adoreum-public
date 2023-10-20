@@ -187,6 +187,17 @@
       "sC" : 3,
       "tS" : 0
     },
+    "\/js\/pages\/profile-min.js" : {
+      "bF" : 0,
+      "ft" : 64,
+      "ma" : 0,
+      "mi" : 1,
+      "oA" : 0,
+      "oAP" : "\/js\/pages\/profile-min-min.js",
+      "oF" : 0,
+      "sC" : 3,
+      "tS" : 0
+    },
     "\/js\/pages\/profile.js" : {
       "bF" : 0,
       "ft" : 64,

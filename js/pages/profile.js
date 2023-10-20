@@ -23,10 +23,10 @@ var PROFILE = (function($, window, document, undefined) {
         //
         // Handle MS "Custom Field" Select fields.
         //
-        $('.form-register select').on('change', function() {
+        $('.form-register :input').on('change', function() {
             // Filter multi-select options.
             var val = $(this).is('select[multiple]') ? $(this).val().join('|') : $(this).val();
-            $(this).parent().find('.input-custom-field').val(val);
+            $(this).parents('.input-wrapper').find('.input-custom-field').val(val);
         })
         // Init.
         .trigger('change');
