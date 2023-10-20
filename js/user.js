@@ -125,6 +125,28 @@ USER = (function($, window, document, undefined) {
             e.preventDefault();
             pub.launchStripeCustomerPortal()
         });
+
+
+        //
+        // Auto-authenticate user page.
+        //
+        if (!!$('body.auto-auth').length) {
+            pub.getCurrentMember(function(member) {
+                // Check if the user is logged-in.
+                if (!HELP.checkKeyExists(member, 'id')) {
+                    // Nope, launch the login modal.
+                    $memberstackDom.openModal("LOGIN").then((loginData) => {
+                        // User logged in.
+                        // Close modal after login.
+                        $memberstackDom.hideModal();
+                        // Show loader.
+                        $memberstackDom._showLoader();
+                        // Reload page.
+                        window.location.reload();
+                    });
+                }
+            });
+        }
     });
     
 
