@@ -123,18 +123,6 @@ var FORMS = (function($, window, document, undefined) {
 
 
         //
-        // Form fields: Populate field's default values with inline attribute's value.
-        //
-        $(':input[data-default-value]').inputAttrDefaultValue();
-        
-
-        //
-        // Form fields: Populate field's default values with sibling DIV's content.
-        //
-        $('.input-default-value').inputDefaultValue();
-
-
-        //
         // Set custom Radio/Checkbox states on page load.
         // Check custom Radio/Checkbox field's hidden <input> if the custom field is set the "checked".
             // IMPORTANT! Do this after the $('.input-default-value').each() (above) to check a value
@@ -174,6 +162,18 @@ var FORMS = (function($, window, document, undefined) {
         // Populate select fields with Collection List item values.
         //
         $('.select-list-options').buildSelectOptions();
+
+
+        //
+        // Form fields: Populate field's default values with inline attribute's value.
+        //
+        $(':input[data-default-value]').inputAttrDefaultValue();
+        
+
+        //
+        // Form fields: Populate field's default values with sibling DIV's content.
+        //
+        $('.input-default-value').inputDefaultValue();
     });
 
     return pub;
