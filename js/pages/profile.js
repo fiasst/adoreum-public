@@ -29,11 +29,9 @@ var PROFILE = (function($, window, document, undefined) {
 
             if ($(this).is('select[multiple]')) {
                 // Remove empty option values from array.
-                val = val.filter(function(el) {
-                    return el !== "";
-                });
+                val = $.grep(val, n => n === 0 || n).join('|');
             }
-            $(this).parents('.input-wrapper').find('.input-custom-field').val( val.join('|') );
+            $(this).parents('.input-wrapper').find('.input-custom-field').val(val);
         })
         // Init.
         .trigger('change');
