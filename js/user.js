@@ -134,6 +134,8 @@ USER = (function($, window, document, undefined) {
             pub.getCurrentMember(function(member) {
                 // Check if the user is logged-in.
                 if (!HELP.checkKeyExists(member, 'id')) {
+                    // Add body class so we can hide the close modal button in CSS.
+                    $('body').addClass('user-anon');
                     // Nope, launch the login modal.
                     $memberstackDom.openModal("LOGIN").then((loginData) => {
                         // User logged in.

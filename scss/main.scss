@@ -80,6 +80,13 @@ textarea {
   text-transform: none;
   margin-top: 1rem;
 }
+.ms-modal__close {
+  // When the user isn't logged in on .auto-auth pages (App webviews),
+  // hide the close modal button so it's the only options.
+  .user-anon & {
+    display: none;
+  }
+}
 
 
 
