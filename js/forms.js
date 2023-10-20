@@ -240,7 +240,9 @@ $.fn.inputDefaultValue = function() {
             }
             $input.trigger('change');
         }
-        // $el.remove();
+        // If we don't remove this element the register/profile form's MS select fields
+        // don't get saved...
+        $el.remove();
     });
 };
 
