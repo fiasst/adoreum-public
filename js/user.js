@@ -139,10 +139,6 @@ USER = (function($, window, document, undefined) {
                     // Nope, launch the login modal.
                     $memberstackDom.openModal("LOGIN").then((loginData) => {
                         // User logged in.
-                        // Close modal after login.
-                        $memberstackDom.hideModal();
-                        // Show loader.
-                        $memberstackDom._showLoader();
                         // Reload page.
                         window.location.reload();
                     });
