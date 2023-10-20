@@ -160,20 +160,24 @@ var FORMS = (function($, window, document, undefined) {
 
         //
         // Populate select fields with Collection List item values.
+            // Keep the following 3 lines in this order to prevent a bug
+            // with the register profile forms not playing nice with
+            // select fields and setting default values/saving values to
+            // Memberstack Custom Fields...
         //
-        $('.select-list-options').buildSelectOptions();
+        $('.select-list-options').buildSelectOptions();// #1
 
 
         //
         // Form fields: Populate field's default values with inline attribute's value.
         //
-        $(':input[data-default-value]').inputAttrDefaultValue();
+        $(':input[data-default-value]').inputAttrDefaultValue();// #2
         
 
         //
         // Form fields: Populate field's default values with sibling DIV's content.
         //
-        $('.input-default-value').inputDefaultValue();
+        $('.input-default-value').inputDefaultValue();// #3
     });
 
     return pub;
