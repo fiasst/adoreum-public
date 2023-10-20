@@ -23,7 +23,7 @@ var PROFILE = (function($, window, document, undefined) {
         //
         // Handle MS "Custom Field" Select fields.
         //
-        $('.form-register :input:not(.ignore)').on('change', function() {
+        $('.form-profile-fields :input:not(.ignore)').on('change', function() {
             // Filter multi-select options.
             var val = $(this).val();
 
