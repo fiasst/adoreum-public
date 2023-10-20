@@ -240,7 +240,7 @@ $.fn.inputDefaultValue = function() {
             }
             $input.trigger('change');
         }
-        $el.remove();
+        // $el.remove();
     });
 };
 
