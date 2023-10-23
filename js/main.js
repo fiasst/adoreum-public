@@ -291,7 +291,7 @@ var MAIN = (function($, window, document, undefined) {
         //
         var $consentBanner = $('#cookie-consent');
         // Check if the consent cookie exists.
-        if (!HELP.getCookie('consent')) {
+        if (!HELP.getCookie('adoreum_consent')) {
             // Cookie not found, show the consent element.
             $consentBanner.removeClass('hide');
         }
@@ -299,7 +299,7 @@ var MAIN = (function($, window, document, undefined) {
         $consentBanner.on('click', '.consent-close', function(e) {
             e.preventDefault();
             // Set the consent cookie to 'true'.
-            HELP.setCookie('consent', 'true', 365);
+            HELP.setCookie('adoreum_consent', 'true', 365);
             // Hide the consent element.
             $consentBanner.remove();
         });
