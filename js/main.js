@@ -293,7 +293,7 @@ var MAIN = (function($, window, document, undefined) {
         // Check if the consent cookie exists.
         if (!HELP.getCookie('consent')) {
             // Cookie not found, show the consent element.
-            $consentBanner.show();
+            $consentBanner.removeClass('hide');
         }
         // Handle close button click
         $consentBanner.on('click', '.consent-close', function(e) {
