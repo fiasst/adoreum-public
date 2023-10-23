@@ -287,6 +287,25 @@ var MAIN = (function($, window, document, undefined) {
 
 
         //
+        // Cookie consent banner.
+        //
+        var $consentBanner = $('#cookie-consent');
+        // Check if the consent cookie exists.
+        if (!HELP.getCookie('consent')) {
+            // Cookie not found, show the consent element.
+            $consentBanner.show();
+        }
+        // Handle close button click
+        $consentBanner.on('click', '.consent-close', function(e) {
+            e.preventDefault();
+            // Set the consent cookie to 'true'.
+            HELP.setCookie('consent', 'true', 365);
+            // Hide the consent element.
+            $consentBanner.remove();
+        });
+
+
+        //
         // General Litbox trigger handler.
         //
         $(document).on('click', '.trigger-lbox', function(e) {
