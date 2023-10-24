@@ -259,14 +259,9 @@ var MAIN = (function($, window, document, undefined) {
         // Get current Member.
         //
         USER.getCurrentMember(function(member) {
-            //if (!member) {
-                //member is logged out
-            //}
-
             //if (!!member.verified) {
                 //member has verified email.
             //}
-            console.log(member);
 
             
             //
