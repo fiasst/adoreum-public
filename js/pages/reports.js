@@ -7,19 +7,43 @@ var REPORTS = (function($, window, document, undefined) {
     //
     $(function() {
         // Get all members for reports dashboard.
-        MAIN.thinking(true, false);
+        MAIN.thinking(true);
+
+        // Get first round of data.
+        getMemberData();
+	});
+
+
+    // Load member data.
+    const getMemberData = (after) => {
+    	let endCursor = after ? '&after='+after : '';
 		HELP.sendAJAX({
-            url: 'https://hook.eu2.make.com/72hi83eco73yt3iipj5ua0dctpb5sl35?hasNextPage=true',//?after=1798073',
+            url: 'https://hook.eu2.make.com/72hi83eco73yt3iipj5ua0dctpb5sl35?hasNextPage=true'+endCursor,//?after=1798073',
             method: 'GET',
             // data: data,
             callbackSuccess: function(data) {
-                MAIN.thinking(false);
-                MAIN.handleAjaxResponse(data, $form);
+                // Add callback function to the response data.
+                data.callback = 'REPORTS.processData';
+
+                MAIN.handleAjaxResponse(data, null);
             },
             callbackError: function(data) {
                 MAIN.thinking(false);
                 console.log('error');
             }
         }, false);
-	});
+	}
+
+	// Callback function to process all members data.
+	pub.processData = (response) => {
+		console.log(response);
+		if (response.data[0].hasNextPage === true) {
+			// Load next round of data.
+			alert('hasNextPage');
+        	getMemberData(response.data[0].endCursor);
+		}
+		else {
+			MAIN.thinking(false);
+		}
+	}
 });
