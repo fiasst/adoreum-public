@@ -46,4 +46,6 @@ var REPORTS = (function($, window, document, undefined) {
         // Get first round of data.
         pub.getMemberData();
 	});
-});
+
+	return pub;
+}(jQuery, this, this.document));
