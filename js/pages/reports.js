@@ -10,10 +10,7 @@ var REPORTS = (function($, window, document, undefined) {
             method: 'GET',
             // data: data,
             callbackSuccess: function(data) {
-                // Add callback function to the response data.
-                data.callback = 'REPORTS.processData';
-
-                MAIN.handleAjaxResponse(data, null);
+                pub.processData(data);
             },
             callbackError: function(data) {
                 MAIN.thinking(false);
@@ -25,7 +22,7 @@ var REPORTS = (function($, window, document, undefined) {
 	// Callback function to process all members data.
 	pub.processData = (response) => {
 		console.log(response);
-		if (response.data[0].hasNextPage === true) {
+		if (response.data[0].hasNextPage === "true") {
 			// Load next round of data.
 			alert('hasNextPage');
         	pub.getMemberData(response.data[0].endCursor);
