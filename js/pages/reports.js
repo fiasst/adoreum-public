@@ -2,20 +2,8 @@ var REPORTS = (function($, window, document, undefined) {
     var pub = {};
 
 
-    //
-    // On DOM ready.
-    //
-    $(function() {
-        // Get all members for reports dashboard.
-        MAIN.thinking(true);
-
-        // Get first round of data.
-        getMemberData();
-	});
-
-
     // Load member data.
-    const getMemberData = (after) => {
+    pub.getMemberData = (after) => {
     	let endCursor = after ? '&after='+after : '';
 		HELP.sendAJAX({
             url: 'https://hook.eu2.make.com/72hi83eco73yt3iipj5ua0dctpb5sl35?hasNextPage=true'+endCursor,//?after=1798073',
@@ -40,10 +28,22 @@ var REPORTS = (function($, window, document, undefined) {
 		if (response.data[0].hasNextPage === true) {
 			// Load next round of data.
 			alert('hasNextPage');
-        	getMemberData(response.data[0].endCursor);
+        	pub.getMemberData(response.data[0].endCursor);
 		}
 		else {
 			MAIN.thinking(false);
 		}
 	}
+
+
+	//
+    // On DOM ready.
+    //
+    $(function() {
+        // Get all members for reports dashboard.
+        MAIN.thinking(true);
+
+        // Get first round of data.
+        pub.getMemberData();
+	});
 });
