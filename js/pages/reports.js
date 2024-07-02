@@ -6,11 +6,11 @@ var REPORTS = (function($, window, document, undefined) {
 	pub.total = 0;
 
 	// reports data.
-	pub.genders = [];
-	pub.countrys = [];
-	pub.motives = [];
-	pub.ages = [];
-	pub.investors = [];
+	pub.genders = [{'Unknown': 0}];
+	pub.countrys = [{'Unknown': 0}];
+	pub.motives = [{'Unknown': 0}];
+	pub.ages = [{'Unknown': 0}];
+	pub.investors = [{'Unknown': 0}];
 	pub.joined = [];
 
 
@@ -50,12 +50,22 @@ var REPORTS = (function($, window, document, undefined) {
 		}
 		else {
 			MAIN.thinking(false);
+			// helper to set/update counts.
+			const updateValue = (prop, val) => {
+				if (!!prop[val]) {
+					prop[val]++;
+				}
+				else {
+					prop[val] = 1;
+				}
+			}
 
 			// Compile data.
 			$.each(pub.members, (i, member) => {
 				// gender.
 				if (member.customFields.gender) {
-					pub.genders[member.customFields.gender]++;
+					// pub.genders[member.customFields.gender]++;
+					updateValue(pub.genders, member.customFields.gender);
 				}
 				else {
 					pub.genders['Unknown']++;
@@ -63,7 +73,8 @@ var REPORTS = (function($, window, document, undefined) {
 
 				// country.
 				if (member.customFields.country) {
-					pub.countrys[member.customFields.country]++;
+					// pub.countrys[member.customFields.country]++;
+					updateValue(pub.countrys, member.customFields.country);
 				}
 				else {
 					pub.countrys['Unknown']++;
@@ -72,7 +83,8 @@ var REPORTS = (function($, window, document, undefined) {
 				// motives.
 				if (member.customFields.motive) {
 					$.each(member.customFields.motive.split('|'), (i, motive) => {
-						pub.motives[motive]++;
+						// pub.motives[motive]++;
+						updateValue(pub.motives, motive);
 					});
 				}
 				else {
@@ -83,7 +95,8 @@ var REPORTS = (function($, window, document, undefined) {
 				if (member.customFields['date-of-birth']) {
 					let year = member.customFields['date-of-birth'].split('/')[2];
 					if (year) {
-						pub.ages[year]++;
+						// pub.ages[year]++;
+						updateValue(pub.ages, year);
 					}
 				}
 				else {
@@ -92,7 +105,8 @@ var REPORTS = (function($, window, document, undefined) {
 
 				// investors.
 				if (member.customFields.investor) {
-					pub.investors[member.customFields.investor]++;
+					// pub.investors[member.customFields.investor]++;
+					updateValue(pub.investors, member.customFields.investor);
 				}
 				else {
 					pub.investors['Unknown']++;
@@ -103,7 +117,8 @@ var REPORTS = (function($, window, document, undefined) {
 					let date = new Date(member.customFields.createdAt);
 					let year = date.getFullYear();
 					let month = date.getMonth()+1;// returns 0-11, so add 1 to get 1-12.
-					pub.joined[`${year}-${month}`]++;
+					// pub.joined[`${year}-${month}`]++;
+					updateValue(pub.joined, `${year}-${month}`);
 				}
 
 				// plans.
