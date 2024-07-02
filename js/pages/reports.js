@@ -36,7 +36,7 @@ var REPORTS = (function($, window, document, undefined) {
 		console.log(response);
 
 		// set/update vars.
-		pub.members.push(response.data);
+		pub.members.push(response.data['data']);
 		pub.current = pub.members.length;
 		pub.total = response.data[0].totalCount;
 
@@ -52,7 +52,7 @@ var REPORTS = (function($, window, document, undefined) {
 			MAIN.thinking(false);
 
 			// Compile data.
-			$.each(response.data, (i, member) => {
+			$.each(pub.members, (i, member) => {
 				// gender.
 				if (member.customFields.gender) {
 					pub.genders[member.customFields.gender]++;
@@ -92,7 +92,7 @@ var REPORTS = (function($, window, document, undefined) {
 
 				// investors.
 				if (member.customFields.investor) {
-					pub.investors[year]++;
+					pub.investors[member.customFields.investor]++;
 				}
 				else {
 					pub.investors['Unknown']++;
