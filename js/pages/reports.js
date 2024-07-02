@@ -2,7 +2,7 @@ var REPORTS = (function($, window, document, undefined) {
     var pub = {
     	members: [],
     	current: 0,
-    	total = 0,
+    	total: 0,
 
     	// reports data.
     	genders: [],
@@ -107,6 +107,8 @@ var REPORTS = (function($, window, document, undefined) {
 				}
 
 				// plans.
+
+				console.log(pub);
 			});
 		}
 	}
