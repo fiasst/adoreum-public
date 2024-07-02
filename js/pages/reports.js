@@ -41,7 +41,7 @@ var REPORTS = (function($, window, document, undefined) {
 		pub.total = response.data[0].totalCount;
 
 		// update summary.
-		updateSummary(pub.current, pub.total);
+		pub.updateSummary(pub.current, pub.total);
 
 		// Load next round of data.
 		if (response.data[0].hasNextPage === "true") {
