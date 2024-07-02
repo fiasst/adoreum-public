@@ -1,17 +1,17 @@
 var REPORTS = (function($, window, document, undefined) {
-    var pub = {
-    	members: [],
-    	current: 0,
-    	total: 0,
+    let pub = {};
 
-    	// reports data.
-    	genders: [],
-    	countrys: [],
-    	motives: [],
-    	ages: [],
-    	investors: [],
-    	joined: []
-    };
+    pub.members = [];
+	pub.current = 0;
+	pub.total = 0;
+
+	// reports data.
+	pub.genders = [];
+	pub.countrys = [];
+	pub.motives = [];
+	pub.ages = [];
+	pub.investors = [];
+	pub.joined = [];
 
 
     // Load member data.
@@ -52,7 +52,7 @@ var REPORTS = (function($, window, document, undefined) {
 			MAIN.thinking(false);
 
 			// Compile data.
-			$.each(pub.members, (i, member) => {
+			$.each(response.data, (i, member) => {
 				// gender.
 				if (member.customFields.gender) {
 					pub.genders[member.customFields.gender]++;
