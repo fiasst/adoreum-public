@@ -8,10 +8,11 @@ var REPORTS = (function($, window, document, undefined) {
 	// reports data.
 	pub.genders = [{'Unknown': 0}];
 	pub.countrys = [{'Unknown': 0}];
-	pub.motives = [{'Unknown': 0}];
+	pub.motives = [];
 	pub.ages = [{'Unknown': 0}];
-	pub.investors = [{'Unknown': 0}];
+	pub.investors = [];
 	pub.joined = [];
+	pub.plans = [];
 
 
     // Load member data.
@@ -64,7 +65,6 @@ var REPORTS = (function($, window, document, undefined) {
 			$.each(pub.members, (i, member) => {
 				// gender.
 				if (member.customFields.gender) {
-					// pub.genders[member.customFields.gender]++;
 					updateValue(pub.genders, member.customFields.gender);
 				}
 				else {
@@ -73,7 +73,6 @@ var REPORTS = (function($, window, document, undefined) {
 
 				// country.
 				if (member.customFields.country) {
-					// pub.countrys[member.customFields.country]++;
 					updateValue(pub.countrys, member.customFields.country);
 				}
 				else {
@@ -83,7 +82,6 @@ var REPORTS = (function($, window, document, undefined) {
 				// motives.
 				if (member.customFields.motive) {
 					$.each(member.customFields.motive.split('|'), (i, motive) => {
-						// pub.motives[motive]++;
 						updateValue(pub.motives, motive);
 					});
 				}
@@ -95,7 +93,6 @@ var REPORTS = (function($, window, document, undefined) {
 				if (member.customFields['date-of-birth']) {
 					let year = member.customFields['date-of-birth'].split('/')[2];
 					if (year) {
-						// pub.ages[year]++;
 						updateValue(pub.ages, year);
 					}
 				}
@@ -105,23 +102,25 @@ var REPORTS = (function($, window, document, undefined) {
 
 				// investors.
 				if (member.customFields.investor) {
-					// pub.investors[member.customFields.investor]++;
 					updateValue(pub.investors, member.customFields.investor);
-				}
-				else {
-					pub.investors['Unknown']++;
 				}
 
 				// joined.
-				if (member.customFields.createdAt) {
-					let date = new Date(member.customFields.createdAt);
+				if (member.createdAt) {
+					let date = new Date(member.createdAt);
 					let year = date.getFullYear();
 					let month = date.getMonth()+1;// returns 0-11, so add 1 to get 1-12.
-					// pub.joined[`${year}-${month}`]++;
 					updateValue(pub.joined, `${year}-${month}`);
 				}
 
 				// plans.
+				if (member.planConnections) {
+					$.each(member.planConnections, (i, plan) => {
+						if (plan.payment && plan.status == "ACTIVE") {
+							updateValue(pub.plans, plan.planName);
+						}
+					});
+				}
 
 				console.log(pub);
 			});
