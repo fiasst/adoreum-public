@@ -36,7 +36,7 @@ var REPORTS = (function($, window, document, undefined) {
 		console.log(response);
 
 		// set/update vars.
-		pub.members.push(response.data['data']);
+		pub.members = pub.members.concat(response.data);
 		pub.current = pub.members.length;
 		pub.total = response.data[0].totalCount;
 
