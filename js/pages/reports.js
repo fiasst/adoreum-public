@@ -8,9 +8,9 @@ var REPORTS = (function($, window, document, undefined) {
 
 	// reports data.
 	pub.genders = {};
-	pub.countries = {'Unknown': 0};
+	pub.countries = {};
 	pub.motives = {};
-	pub.ages = {'Unknown': 0};
+	pub.ages = {};
 	pub.investors = {};
 	pub.joined = {};
 	pub.plans = {};
@@ -82,7 +82,9 @@ var REPORTS = (function($, window, document, undefined) {
 					updateValue(pub.countries, member.customFields.country);
 				}
 				else {
-					pub.countries['Unknown']++;
+					// pub.countries['Unknown']++;
+					updateValue(pub.countries, 'Unknown');
+
 				}
 
 				// motives.
@@ -92,18 +94,20 @@ var REPORTS = (function($, window, document, undefined) {
 					});
 				}
 				else {
-					pub.motives['Unknown']++;
+					// pub.motives['Unknown']++;
+					updateValue(pub.motives, 'Unknown');
 				}
 
 				// age.
 				if (member.customFields['date-of-birth']) {
 					let year = member.customFields['date-of-birth'].split('/')[2];
 					if (year) {
-						updateValue(pub.ages, year);
+						updateValue(pub.ages, year.trim());
 					}
 				}
 				else {
-					pub.ages['Unknown']++;
+					// pub.ages['Unknown']++;
+					updateValue(pub.ages, 'Unknown');
 				}
 
 				// investors.
@@ -203,7 +207,7 @@ var REPORTS = (function($, window, document, undefined) {
 	        data: {
 		        labels: params.labels,//['Female', 'Male', 'Other'],
 		        datasets: [{
-		            label: params.title,//'Genders',
+		            //label: params.title,//'Genders',
 		            data: params.data,//[178, 267, 4],
 		            backgroundColor: params.bgColors || null,
 		            borderColor: params.bdColors || null,
@@ -230,7 +234,7 @@ var REPORTS = (function($, window, document, undefined) {
 		pub.createChart({
 			type: 'doughnut',
 			id: 'genderChart',
-			title: 'Genders',
+			title: 'Count',
 			labels: Object.keys(REPORTS.genders),
 			data: Object.values(REPORTS.genders),
 			bgColors: [
@@ -249,7 +253,7 @@ var REPORTS = (function($, window, document, undefined) {
 		pub.createChart({
 			type: 'doughnut',
 			id: 'countriesChart',
-			title: 'Countries',
+			title: 'Count',
 			labels: Object.keys(REPORTS.countries),
 			data: Object.values(REPORTS.countries)
 		});
@@ -258,9 +262,36 @@ var REPORTS = (function($, window, document, undefined) {
 		pub.createChart({
 			type: 'doughnut',
 			id: 'motivesChart',
-			title: 'Countries',
+			title: 'Count',
 			labels: Object.keys(REPORTS.motives),
 			data: Object.values(REPORTS.motives)
+		});
+
+		// Create Ages chart
+		pub.createChart({
+			type: 'doughnut',
+			id: 'agesChart',
+			title: 'Count',
+			labels: Object.keys(REPORTS.ages),
+			data: Object.values(REPORTS.ages)
+		});
+
+		// Create Investors chart
+		pub.createChart({
+			type: 'doughnut',
+			id: 'investorsChart',
+			title: 'Count',
+			labels: Object.keys(REPORTS.investors),
+			data: Object.values(REPORTS.investors)
+		});
+
+		// Create Plans chart
+		pub.createChart({
+			type: 'doughnut',
+			id: 'plansChart',
+			title: 'Count',
+			labels: Object.keys(REPORTS.plans),
+			data: Object.values(REPORTS.plans)
 		});
 	}
 
