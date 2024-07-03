@@ -6,13 +6,13 @@ var REPORTS = (function($, window, document, undefined) {
 	pub.total = 0;
 
 	// reports data.
-	pub.genders = [{'Unknown': 0}];
-	pub.countrys = [{'Unknown': 0}];
-	pub.motives = [];
-	pub.ages = [{'Unknown': 0}];
-	pub.investors = [];
-	pub.joined = [];
-	pub.plans = [];
+	pub.genders = {};
+	pub.countrys = {'Unknown': 0};
+	pub.motives = {};
+	pub.ages = {'Unknown': 0};
+	pub.investors = {};
+	pub.joined = {};
+	pub.plans = {};
 
 
     // Load member data.
@@ -23,6 +23,7 @@ var REPORTS = (function($, window, document, undefined) {
             method: 'GET',
             // data: data,
             callbackSuccess: function(data) {
+            	pub.setCache(data);
                 pub.processData(data);
             },
             callbackError: function(data) {
@@ -66,9 +67,6 @@ var REPORTS = (function($, window, document, undefined) {
 				// gender.
 				if (member.customFields.gender) {
 					updateValue(pub.genders, member.customFields.gender);
-				}
-				else {
-					pub.genders['Unknown']++;
 				}
 
 				// country.
@@ -123,8 +121,61 @@ var REPORTS = (function($, window, document, undefined) {
 				}
 
 				console.log(pub);
+				// TODO:
+					// Store pub.members in localstorage and check if it's within 2 hours cache.
+					// Create charts using chatGPT...
+						// Object.keys(REPORTS.genders)
+						// Object.values(REPORTS.genders)
+					// Create dropdown list of countries in Register form...
+						// Make sure it autofills with Memberstack saved data in the edit profile form.
 			});
 		}
+	}
+
+
+	// Function to check for cached reports data less than X hours old.
+    pub.checkCache = () => {
+        // Retrieve the cached object from localStorage
+        var cachedData = localStorage.getItem('cachedData'),
+        	cacheExpiryHours = 1;
+
+        if (cachedData) {
+            // Parse the cached object
+            cachedData = JSON.parse(cachedData);
+            // Get the current time and cached time
+            var currentTime = new Date().getTime(),
+            	cachedTime = cachedData.timestamp,
+
+            	// Calculate the time difference in hours
+            	timeDifference = (currentTime - cachedTime) / (1000*60*60);
+
+            if (timeDifference < cacheExpiryHours) {
+                console.log('Use cache');
+                // Cached data is less than X hours old
+                pub.processData(cachedData.data);
+            }
+            else {
+            	console.log('Cache expired');
+                // Cached data is older than X hours, delete it
+                localStorage.removeItem('cachedData');
+                // Get fresh data
+        		pub.getMemberData();
+            }
+        }
+        else {
+        	console.log('No cache found');
+            // No cached data found
+        	pub.getMemberData();
+        }
+    }
+
+
+    pub.setCache = (data) => {
+	    var cachedData = {
+	        data: data,
+	        timestamp: new Date().getTime()
+	    };
+	    localStorage.setItem('cachedData', JSON.stringify(cachedData));
 	}
 
 
@@ -142,8 +193,8 @@ var REPORTS = (function($, window, document, undefined) {
         // Get all members for reports dashboard.
         MAIN.thinking(true);
 
-        // Get first round of data.
-        pub.getMemberData();
+        // Run the cache check function
+    	pub.checkCache();
 	});
 
 	return pub;
