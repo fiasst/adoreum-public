@@ -1,3 +1,13 @@
+// Uppercase the first character of a String.
+// usage: "hello, world!".capFirst();
+Object.defineProperty(String.prototype, 'capFirst', {
+    value: function() {
+        return this.charAt(0).toUpperCase() + this.slice(1);
+    },
+    enumerable: false
+});
+
+
 var REPORTS = (function($, window, document, undefined) {
     let pub = {};
 
@@ -14,6 +24,7 @@ var REPORTS = (function($, window, document, undefined) {
 	pub.investors = {};
 	pub.joined = {};
 	pub.plans = {};
+    pub.subscriberStatus = [];
 
 
     // Get all members for reports dashboard.
@@ -82,7 +93,6 @@ var REPORTS = (function($, window, document, undefined) {
 					updateValue(pub.countries, member.customFields.country);
 				}
 				else {
-					// pub.countries['Unknown']++;
 					updateValue(pub.countries, 'Unknown');
 
 				}
@@ -94,7 +104,6 @@ var REPORTS = (function($, window, document, undefined) {
 					});
 				}
 				else {
-					// pub.motives['Unknown']++;
 					updateValue(pub.motives, 'Unknown');
 				}
 
@@ -104,8 +113,6 @@ var REPORTS = (function($, window, document, undefined) {
 						currentYear = new Date().getFullYear();
 
 					if (year) {
-						// updateValue(pub.ages, currentYear - parseInt(year.trim()));
-
 			            const age = currentYear - parseInt(year.trim());
 			            let range;
 
@@ -140,7 +147,6 @@ var REPORTS = (function($, window, document, undefined) {
 					}
 				}
 				else {
-					// pub.ages['Unknown']++;
 					updateValue(pub.ageRanges, 'Unknown');
 				}
 
@@ -154,23 +160,62 @@ var REPORTS = (function($, window, document, undefined) {
 					let date = new Date(member.createdAt);
 					let year = date.getFullYear();
 					let month = date.getMonth()+1;// returns 0-11, so add 1 to get 1-12.
+					if (month < 10) month = "0"+month;
 					updateValue(pub.joined, `${year}-${month}`);
 				}
 
 				// plans.
 				if (member.planConnections) {
+					let subStatus = [],
+						status;
+
 					$.each(member.planConnections, (i, plan) => {
-						if (plan.payment && plan.status == "ACTIVE") {
-							updateValue(pub.plans, plan.planName);
+						if (plan.payment) {
+							switch (plan.status) {
+								case "ACTIVE":
+									// Build active plans data
+									updateValue(pub.plans, plan.planName);
+
+									subStatus.push('active');
+								case "CANCELED":
+									subStatus.push('canceled');
+								case "TRIALING":
+									subStatus.push('trialing');
+								case "PAST_DUE":
+									subStatus.push('past_due');
+								case "UNPAID":
+									subStatus.push('unpaid');
+							}
 						}
 					});
+
+					// Build subscription status data.
+					if (subStatus.includes('active')) {
+						status = 'Active';
+					}
+					else if (subStatus.includes('trialing')) {
+						status = 'Trialing';
+					}
+					else if (subStatus.includes('past_due')) {
+						status = 'Past due';
+					}
+					else if (subStatus.includes('unpaid')) {
+						status = 'Unpaid';
+					}
+					else if (subStatus.includes('canceled')) {
+						status = 'Canceled';
+					}
+					else if (subStatus.length < 1) {
+						status = 'Never subscribed';
+					}
+					updateValue(pub.subscriberStatus, status);
 				}
 
 				// TODO:
-					// Store pub.members in localstorage and check if it's within 2 hours cache.
-					// Create charts using chatGPT...
-						// Object.keys(REPORTS.genders)
-						// Object.values(REPORTS.genders)
+					// Create a Admin link (for staff members only) in the sidebar menu. Hide it by default.
+					// Add:
+						// Total members (active subscribers with active plan)
+						// Primary membership city (new field*)
 					// Create dropdown list of countries in Register form...
 						// Make sure it autofills with Memberstack saved data in the edit profile form.
 			});
@@ -249,7 +294,6 @@ var REPORTS = (function($, window, document, undefined) {
 	        data: {
 		        labels: Object.keys(REPORTS.genders),
 		        datasets: [{
-		            //label: 'Count',
 		            data: Object.values(REPORTS.genders),
 		            backgroundColor: [
 			            '#679FDF',
@@ -277,7 +321,6 @@ var REPORTS = (function($, window, document, undefined) {
 	        data: {
 		        labels: Object.keys(REPORTS.countries),
 		        datasets: [{
-		            //label: 'Count',
 		            data: Object.values(REPORTS.countries)
 		        }]
 		    },
@@ -300,7 +343,6 @@ var REPORTS = (function($, window, document, undefined) {
 	        data: {
 		        labels: Object.keys(REPORTS.motives),
 		        datasets: [{
-		            //label: 'Count',
 		            data: Object.values(REPORTS.motives)
 		        }]
 		    },
@@ -323,7 +365,6 @@ var REPORTS = (function($, window, document, undefined) {
 	        data: {
 		        labels: Object.keys(REPORTS.ageRanges),
 		        datasets: [{
-		            //label: 'Count',
 		            data: Object.values(REPORTS.ageRanges)
 		        }]
 		    },
@@ -346,7 +387,6 @@ var REPORTS = (function($, window, document, undefined) {
 	        data: {
 		        labels: Object.keys(REPORTS.investors),
 		        datasets: [{
-		            //label: 'Count',
 		            data: Object.values(REPORTS.investors),
 		        	backgroundColor: [
 		        		'#DD7586',
@@ -373,8 +413,30 @@ var REPORTS = (function($, window, document, undefined) {
 	        data: {
 		        labels: Object.keys(REPORTS.plans),
 		        datasets: [{
-		            //label: 'Count',
 		            data: Object.values(REPORTS.plans)
+		        }]
+		    },
+	        options: {
+	            responsive: true,
+	            plugins: {
+	                legend: {
+	                    position: 'top'
+	                },
+	                tooltip: {
+	                    enabled: true
+	                }
+	            }
+	        }
+	    });
+
+
+	    // Create subscriberStatus chart
+	    pub.createChart('subStatusChart', {
+	        type: 'doughnut',
+	        data: {
+		        labels: Object.keys(REPORTS.subscriberStatus),
+		        datasets: [{
+		            data: Object.values(REPORTS.subscriberStatus)
 		        }]
 		    },
 	        options: {

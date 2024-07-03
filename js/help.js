@@ -598,17 +598,6 @@ HELP = (function($, window, document, undefined) {
         document.cookie = name+'=; expires=Thu, 01-Jan-70 00:00:01 GMT; path=/';
     };
 
-
-
-    // Uppercase the first character of a String.
-    // usage: "hello, world!".capFirst();
-    Object.defineProperty(String.prototype, 'capFirst', {
-        value: function() {
-            return this.charAt(0).toUpperCase() + this.slice(1);
-        },
-        enumerable: false
-    });
-
     
 
     //
