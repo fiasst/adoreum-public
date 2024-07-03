@@ -100,9 +100,11 @@ var REPORTS = (function($, window, document, undefined) {
 
 				// age.
 				if (member.customFields['date-of-birth']) {
-					let year = member.customFields['date-of-birth'].split('/')[2];
+					let year = member.customFields['date-of-birth'].split('/')[2].trim(),
+						currentYear = new Date().getFullYear();
+
 					if (year) {
-						updateValue(pub.ages, year.trim());
+						updateValue(pub.ages, currentYear - parseInt(year));
 					}
 				}
 				else {
@@ -112,7 +114,7 @@ var REPORTS = (function($, window, document, undefined) {
 
 				// investors.
 				if (member.customFields.investor) {
-					updateValue(pub.investors, member.customFields.investor);
+					updateValue(pub.investors, member.customFields.investor.capFirst());
 				}
 
 				// joined.
@@ -200,18 +202,28 @@ var REPORTS = (function($, window, document, undefined) {
 	}
 
 
-	pub.createChart = (params) => {
-		const ctx = document.getElementById(params.id).getContext('2d');
-	    const config = {
-	        type: params.type,//'doughnut',
+	// Create a Doughnut style chart
+	pub.createChart = (id, params) => {
+		const ctx = document.getElementById(id).getContext('2d');
+	    pub.charts[id.toLowerCase()] = new Chart(ctx, params);
+	}
+
+
+	// Generate all charts
+	pub.generateCharts = () => {
+		// Create Genders chart
+		pub.createChart('genderChart', {
+	        type: 'doughnut',
 	        data: {
-		        labels: params.labels,//['Female', 'Male', 'Other'],
+		        labels: Object.keys(REPORTS.genders),
 		        datasets: [{
-		            //label: params.title,//'Genders',
-		            data: params.data,//[178, 267, 4],
-		            backgroundColor: params.bgColors || null,
-		            borderColor: params.bdColors || null,
-		            borderWidth: 1
+		            //label: 'Count',
+		            data: Object.values(REPORTS.genders),
+		            backgroundColor: [
+			            '#DD7586',
+			            '#679FDF',
+			            '#7FBBBE'
+			        ]
 		        }]
 		    },
 	        options: {
@@ -225,74 +237,160 @@ var REPORTS = (function($, window, document, undefined) {
 	                }
 	            }
 	        }
-	    };
-	    pub.charts[params.id.toLowerCase()] = new Chart(ctx, config);
-	}
-
-	pub.generateCharts = () => {
-		// Create Genders chart
-		pub.createChart({
-			type: 'doughnut',
-			id: 'genderChart',
-			title: 'Count',
-			labels: Object.keys(REPORTS.genders),
-			data: Object.values(REPORTS.genders),
-			bgColors: [
-	            'rgba(255, 99, 132, 0.2)',
-	            'rgba(54, 162, 235, 0.2)',
-	            'rgba(75, 192, 192, 0.2)'
-	        ],
-	        bdColors: [
-	            'rgba(255, 99, 132, 1)',
-	            'rgba(54, 162, 235, 1)',
-	            'rgba(75, 192, 192, 1)'
-	        ]
-		});
+	    });
 
 		// Create Countries chart
-		pub.createChart({
-			type: 'doughnut',
-			id: 'countriesChart',
-			title: 'Count',
-			labels: Object.keys(REPORTS.countries),
-			data: Object.values(REPORTS.countries)
-		});
+		pub.createChart('countriesChart', {
+	        type: 'doughnut',
+	        data: {
+		        labels: Object.keys(REPORTS.countries),
+		        datasets: [{
+		            //label: 'Count',
+		            data: Object.values(REPORTS.countries)
+		        }]
+		    },
+	        options: {
+	            responsive: true,
+	            plugins: {
+	                legend: {
+	                    position: 'top'
+	                },
+	                tooltip: {
+	                    enabled: true
+	                }
+	            }
+	        }
+	    });
 
 		// Create Motives chart
-		pub.createChart({
-			type: 'doughnut',
-			id: 'motivesChart',
-			title: 'Count',
-			labels: Object.keys(REPORTS.motives),
-			data: Object.values(REPORTS.motives)
-		});
+		pub.createChart('motivesChart', {
+	        type: 'doughnut',
+	        data: {
+		        labels: Object.keys(REPORTS.motives),
+		        datasets: [{
+		            //label: 'Count',
+		            data: Object.values(REPORTS.motives)
+		        }]
+		    },
+	        options: {
+	            responsive: true,
+	            plugins: {
+	                legend: {
+	                    position: 'top'
+	                },
+	                tooltip: {
+	                    enabled: true
+	                }
+	            }
+	        }
+	    });
 
 		// Create Ages chart
-		pub.createChart({
-			type: 'doughnut',
-			id: 'agesChart',
-			title: 'Count',
-			labels: Object.keys(REPORTS.ages),
-			data: Object.values(REPORTS.ages)
-		});
+		pub.createChart('agesChart', {
+	        type: 'doughnut',
+	        data: {
+		        labels: Object.keys(REPORTS.ages),
+		        datasets: [{
+		            //label: 'Count',
+		            data: Object.values(REPORTS.ages)
+		        }]
+		    },
+	        options: {
+	            responsive: true,
+	            plugins: {
+	                legend: {
+	                    position: 'top'
+	                },
+	                tooltip: {
+	                    enabled: true
+	                }
+	            }
+	        }
+	    });
 
 		// Create Investors chart
-		pub.createChart({
-			type: 'doughnut',
-			id: 'investorsChart',
-			title: 'Count',
-			labels: Object.keys(REPORTS.investors),
-			data: Object.values(REPORTS.investors)
-		});
+		pub.createChart('investorsChart', {
+	        type: 'doughnut',
+	        data: {
+		        labels: Object.keys(REPORTS.investors),
+		        datasets: [{
+		            //label: 'Count',
+		            data: Object.values(REPORTS.investors),
+		        	backgroundColor: [
+		        		'#DD7586',
+	            		'#7FBBBE'
+		        	]
+		        }]
+		    },
+	        options: {
+	            responsive: true,
+	            plugins: {
+	                legend: {
+	                    position: 'top'
+	                },
+	                tooltip: {
+	                    enabled: true
+	                }
+	            }
+	        }
+	    });
 
 		// Create Plans chart
-		pub.createChart({
-			type: 'doughnut',
-			id: 'plansChart',
-			title: 'Count',
-			labels: Object.keys(REPORTS.plans),
-			data: Object.values(REPORTS.plans)
-		});
+		pub.createChart('plansChart', {
+	        type: 'doughnut',
+	        data: {
+		        labels: Object.keys(REPORTS.plans),
+		        datasets: [{
+		            //label: 'Count',
+		            data: Object.values(REPORTS.plans)
+		        }]
+		    },
+	        options: {
+	            responsive: true,
+	            plugins: {
+	                legend: {
+	                    position: 'top'
+	                },
+	                tooltip: {
+	                    enabled: true
+	                }
+	            }
+	        }
+	    });
+
+	    // Create Joined chart
+	    pub.createChart('joinedChart', {
+	        type: 'line',
+	        data: {
+		        labels: Object.keys(REPORTS.joined),
+		        datasets: [{
+		            data: Object.values(REPORTS.joined),
+		            borderWidth: 1,
+		            fill: false,
+		            tension: 0.1
+		        }]
+		    },
+	        options: {
+	            responsive: true,
+	            scales: {
+	                x: {
+	                    beginAtZero: true
+	                },
+	                y: {
+	                    beginAtZero: true
+	                }
+	            },
+	            plugins: {
+	                legend: {
+	                    display: true,
+	                    position: 'top'
+	                },
+	                tooltip: {
+	                    enabled: true
+	                }
+	            }
+	        }
+	    });
 	}
 
 
