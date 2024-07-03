@@ -15,11 +15,15 @@ var REPORTS = (function($, window, document, undefined) {
 	pub.plans = {};
 
 
-    // Load member data.
+    // Get all members for reports dashboard.
     pub.getMemberData = (after) => {
     	let endCursor = after ? '&after='+after : '';
+	    	
+	    // Show thinking icon
+        MAIN.thinking(true);
+        // Load data
 		HELP.sendAJAX({
-            url: 'https://hook.eu2.make.com/72hi83eco73yt3iipj5ua0dctpb5sl35?hasNextPage=true'+endCursor,//?after=1798073',
+            url: 'https://hook.eu2.make.com/72hi83eco73yt3iipj5ua0dctpb5sl35?hasNextPage=true'+endCursor,
             method: 'GET',
             // data: data,
             callbackSuccess: function(data) {
@@ -32,6 +36,7 @@ var REPORTS = (function($, window, document, undefined) {
             }
         }, false);
 	}
+
 
 	// Callback function to process all members data.
 	pub.processData = (response) => {
@@ -152,7 +157,7 @@ var REPORTS = (function($, window, document, undefined) {
             if (timeDifference < cacheExpiryHours) {
                 console.log('Use cache');
                 // Cached data is less than X hours old
-                pub.processData(cachedData.data);
+                pub.processData(cachedData);
             }
             else {
             	console.log('Cache expired');
@@ -190,9 +195,6 @@ var REPORTS = (function($, window, document, undefined) {
     // On DOM ready.
     //
     $(function() {
-        // Get all members for reports dashboard.
-        MAIN.thinking(true);
-
         // Run the cache check function
     	pub.checkCache();
 	});
