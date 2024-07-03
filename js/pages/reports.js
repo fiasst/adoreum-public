@@ -10,7 +10,7 @@ var REPORTS = (function($, window, document, undefined) {
 	pub.genders = {};
 	pub.countries = {};
 	pub.motives = {};
-	pub.ages = {};
+	pub.ageRanges = {};
 	pub.investors = {};
 	pub.joined = {};
 	pub.plans = {};
@@ -104,12 +104,44 @@ var REPORTS = (function($, window, document, undefined) {
 						currentYear = new Date().getFullYear();
 
 					if (year) {
-						updateValue(pub.ages, currentYear - parseInt(year.trim()));
+						// updateValue(pub.ages, currentYear - parseInt(year.trim()));
+
+			            const age = currentYear - parseInt(year.trim());
+			            let range;
+
+			            if (age >= 16 && age <= 25) {
+			            	range = "16-25";
+			            }
+			            else if (age >= 26 && age <= 35) {
+			            	range = "26-35";
+			            }
+			            else if (age >= 36 && age <= 45) {
+			            	range = "36-45";
+			            }
+			            else if (age >= 46 && age <= 55) {
+			            	range = "46-55";
+			            }
+			            else if (age >= 56 && age <= 65) {
+			            	range = "56-65";
+			            }
+			            else if (age >= 66 && age <= 75) {
+			            	range = "66-75";
+			            }
+			            else if (age >= 76 && age <= 85) {
+			            	range = "76-85";
+			            }
+			            else if (age >= 86 && age <= 95) {
+			            	range = "86-95";
+			            }
+			            else if (age >= 96 && age <= 105) {
+			            	range = "96-105";
+			            }
+				        updateValue(pub.ageRanges, range);
 					}
 				}
 				else {
 					// pub.ages['Unknown']++;
-					updateValue(pub.ages, 'Unknown');
+					updateValue(pub.ageRanges, 'Unknown');
 				}
 
 				// investors.
@@ -220,8 +252,8 @@ var REPORTS = (function($, window, document, undefined) {
 		            //label: 'Count',
 		            data: Object.values(REPORTS.genders),
 		            backgroundColor: [
-			            '#DD7586',
 			            '#679FDF',
+			            '#DD7586',
 			            '#7FBBBE'
 			        ]
 		        }]
@@ -289,10 +321,10 @@ var REPORTS = (function($, window, document, undefined) {
 		pub.createChart('agesChart', {
 	        type: 'doughnut',
 	        data: {
-		        labels: Object.keys(REPORTS.ages),
+		        labels: Object.keys(REPORTS.ageRanges),
 		        datasets: [{
 		            //label: 'Count',
-		            data: Object.values(REPORTS.ages)
+		            data: Object.values(REPORTS.ageRanges)
 		        }]
 		    },
 	        options: {
@@ -365,7 +397,6 @@ var REPORTS = (function($, window, document, undefined) {
 		        labels: Object.keys(REPORTS.joined),
 		        datasets: [{
 		            data: Object.values(REPORTS.joined),
-		            borderWidth: 1,
 		            fill: false,
 		            tension: 0.1
 		        }]
@@ -382,8 +413,7 @@ var REPORTS = (function($, window, document, undefined) {
 	            },
 	            plugins: {
 	                legend: {
-	                    display: true,
-	                    position: 'top'
+	                    display: false
 	                },
 	                tooltip: {
 	                    enabled: true
