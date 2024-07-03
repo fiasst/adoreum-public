@@ -181,6 +181,7 @@ var REPORTS = (function($, window, document, undefined) {
 									subStatus.push('canceled');
 								case "TRIALING":
 									subStatus.push('trialing');
+									console.log(member);
 								case "PAST_DUE":
 									subStatus.push('past_due');
 								case "UNPAID":
@@ -193,9 +194,6 @@ var REPORTS = (function($, window, document, undefined) {
 					if (subStatus.includes('active')) {
 						status = 'Active';
 					}
-					else if (subStatus.includes('trialing')) {
-						status = 'Trialing';
-					}
 					else if (subStatus.includes('past_due')) {
 						status = 'Past due';
 					}
@@ -204,6 +202,9 @@ var REPORTS = (function($, window, document, undefined) {
 					}
 					else if (subStatus.includes('canceled')) {
 						status = 'Canceled';
+					}
+					else if (subStatus.includes('trialing')) {
+						status = 'Trialing';
 					}
 					else if (subStatus.length < 1) {
 						status = 'Never subscribed';
