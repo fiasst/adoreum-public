@@ -170,7 +170,7 @@ var REPORTS = (function($, window, document, undefined) {
 						status;
 
 					$.each(member.planConnections, (i, plan) => {
-						if (plan.payment) {
+						if (plan.type == "SUBSCRIPTION") {
 							switch (plan.status) {
 								case "ACTIVE":
 									// Build active plans data
