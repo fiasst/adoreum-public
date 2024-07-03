@@ -8,7 +8,7 @@ var REPORTS = (function($, window, document, undefined) {
 
 	// reports data.
 	pub.genders = {};
-	pub.countrys = {'Unknown': 0};
+	pub.countries = {'Unknown': 0};
 	pub.motives = {};
 	pub.ages = {'Unknown': 0};
 	pub.investors = {};
@@ -79,10 +79,10 @@ var REPORTS = (function($, window, document, undefined) {
 
 				// country.
 				if (member.customFields.country) {
-					updateValue(pub.countrys, member.customFields.country);
+					updateValue(pub.countries, member.customFields.country);
 				}
 				else {
-					pub.countrys['Unknown']++;
+					pub.countries['Unknown']++;
 				}
 
 				// motives.
@@ -243,6 +243,25 @@ var REPORTS = (function($, window, document, undefined) {
 	            'rgba(54, 162, 235, 1)',
 	            'rgba(75, 192, 192, 1)'
 	        ]
+		});
+
+		// Create Countries chart
+		pub.createChart({
+			type: 'doughnut',
+			id: 'countriesChart',
+			title: 'Countries',
+			labels: Object.keys(REPORTS.countries),
+			data: Object.values(REPORTS.countries)//,
+			// bgColors: [
+	        //     'rgba(255, 99, 132, 0.2)',
+	        //     'rgba(54, 162, 235, 0.2)',
+	        //     'rgba(75, 192, 192, 0.2)'
+	        // ],
+	        // bdColors: [
+	        //     'rgba(255, 99, 132, 1)',
+	        //     'rgba(54, 162, 235, 1)',
+	        //     'rgba(75, 192, 192, 1)'
+	        // ]
 		});
 	}
 
