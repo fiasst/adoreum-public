@@ -100,11 +100,11 @@ var REPORTS = (function($, window, document, undefined) {
 
 				// age.
 				if (member.customFields['date-of-birth']) {
-					let year = member.customFields['date-of-birth'].split('/')[2].trim(),
+					let year = member.customFields['date-of-birth'].split('/')[2],
 						currentYear = new Date().getFullYear();
 
 					if (year) {
-						updateValue(pub.ages, currentYear - parseInt(year));
+						updateValue(pub.ages, currentYear - parseInt(year).trim());
 					}
 				}
 				else {
