@@ -47,9 +47,6 @@ var REPORTS = (function($, window, document, undefined) {
 		pub.current = pub.members.length;
 		pub.total = response.data[0].totalCount;
 
-		// update cache
-		pub.setCache({data: pub.members});
-
 		// update summary.
 		pub.updateSummary(pub.current, pub.total);
 
@@ -59,6 +56,10 @@ var REPORTS = (function($, window, document, undefined) {
 		}
 		else {
 			MAIN.thinking(false);
+			
+			// update cache
+			pub.setCache({data: pub.members});
+
 			// helper to set/update counts.
 			const updateValue = (prop, val) => {
 				if (!!prop[val]) {
