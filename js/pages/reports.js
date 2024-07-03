@@ -173,17 +173,20 @@ var REPORTS = (function($, window, document, undefined) {
 						if (plan.type == "SUBSCRIPTION") {
 							switch (plan.status) {
 								case "ACTIVE":
+									subStatus.push('active');
 									// Build active plans data
 									updateValue(pub.plans, plan.planName);
-
-									subStatus.push('active');
+									break;
 								case "CANCELED":
 									subStatus.push('canceled');
+									break;
 								case "TRIALING":
 									subStatus.push('trialing');
 									console.log(member);
+									break;
 								case "PAST_DUE":
 									subStatus.push('past_due');
+									break;
 								case "UNPAID":
 									subStatus.push('unpaid');
 							}
