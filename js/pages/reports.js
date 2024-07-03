@@ -39,7 +39,7 @@ var REPORTS = (function($, window, document, undefined) {
 
 
 	// Callback function to process all members data.
-	pub.processData = (response) => {
+	pub.processData = (response, useCache) => {
 		console.log(response);
 
 		// set/update vars.
@@ -51,7 +51,7 @@ var REPORTS = (function($, window, document, undefined) {
 		pub.updateSummary(pub.current, pub.total);
 
 		// Load next round of data.
-		if (response.data[0].hasNextPage === "true") {
+		if (response.data[0].hasNextPage === "true" && !useCache) {
         	pub.getMemberData(response.data[0].endCursor);
 		}
 		else {
@@ -162,7 +162,7 @@ var REPORTS = (function($, window, document, undefined) {
             if (timeDifference < cacheExpiryHours) {
                 console.log('Use cache');
                 // Cached data is less than X hours old
-                pub.processData(cachedData);
+                pub.processData(cachedData, true);
             }
             else {
             	console.log('Cache expired');
