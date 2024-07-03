@@ -1,6 +1,7 @@
 var REPORTS = (function($, window, document, undefined) {
     let pub = {};
 
+    pub.charts = [];
     pub.members = [];
 	pub.current = 0;
 	pub.total = 0;
@@ -136,6 +137,7 @@ var REPORTS = (function($, window, document, undefined) {
 			});
 
 			console.log(pub);
+			pub.generateCharts();
 		}
 	}
 
@@ -190,6 +192,57 @@ var REPORTS = (function($, window, document, undefined) {
 		let $summary = $('#summary');
 		$('.current', $summary).text(current);
 		$('.total', $summary).text(total);
+	}
+
+
+	pub.createChart = (params) => {
+		const ctx = document.getElementById(params.id).getContext('2d');
+	    const config = {
+	        type: params.type,//'doughnut',
+	        data: {
+		        labels: params.labels,//['Female', 'Male', 'Other'],
+		        datasets: [{
+		            label: params.title,//'Genders',
+		            data: params.data,//[178, 267, 4],
+		            backgroundColor: params.bgColors || null,
+		            borderColor: params.bdColors || null,
+		            borderWidth: 1
+		        }]
+		    },
+	        options: {
+	            responsive: true,
+	            plugins: {
+	                legend: {
+	                    position: 'top'
+	                },
+	                tooltip: {
+	                    enabled: true
+	                }
+	            }
+	        }
+	    };
+	    pub.charts[params.id.toLowerCase()] = new Chart(ctx, config);
+	}
+
+	pub.generateCharts = () => {
+		// Create Genders chart
+		pub.createChart({
+			type: 'doughnut',
+			id: 'genderChart',
+			title: 'Genders',
+			labels: Object.keys(REPORTS.genders),
+			data: Object.values(REPORTS.genders),
+			bgColors: [
+	            'rgba(255, 99, 132, 0.2)',
+	            'rgba(54, 162, 235, 0.2)',
+	            'rgba(75, 192, 192, 0.2)'
+	        ],
+	        bdColors: [
+	            'rgba(255, 99, 132, 1)',
+	            'rgba(54, 162, 235, 1)',
+	            'rgba(75, 192, 192, 1)'
+	        ]
+		});
 	}
 
 
