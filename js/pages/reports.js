@@ -47,7 +47,6 @@ var REPORTS = (function($, window, document, undefined) {
 
 		// Load next round of data.
 		if (response.data[0].hasNextPage === "true") {
-			alert('hasNextPage');
         	pub.getMemberData(response.data[0].endCursor);
 		}
 		else {
@@ -120,7 +119,6 @@ var REPORTS = (function($, window, document, undefined) {
 					});
 				}
 
-				console.log(pub);
 				// TODO:
 					// Store pub.members in localstorage and check if it's within 2 hours cache.
 					// Create charts using chatGPT...
@@ -129,6 +127,8 @@ var REPORTS = (function($, window, document, undefined) {
 					// Create dropdown list of countries in Register form...
 						// Make sure it autofills with Memberstack saved data in the edit profile form.
 			});
+
+			console.log(pub);
 		}
 	}
 
@@ -172,7 +172,7 @@ var REPORTS = (function($, window, document, undefined) {
 
     pub.setCache = (data) => {
 	    var cachedData = {
-	        data: data,
+	        data: data.data,
 	        timestamp: new Date().getTime()
 	    };
 	    localStorage.setItem('cachedData', JSON.stringify(cachedData));
