@@ -104,7 +104,7 @@ var REPORTS = (function($, window, document, undefined) {
 						currentYear = new Date().getFullYear();
 
 					if (year) {
-						updateValue(pub.ages, currentYear - parseInt(year).trim());
+						updateValue(pub.ages, currentYear - parseInt(year.trim()));
 					}
 				}
 				else {
