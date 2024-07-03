@@ -27,7 +27,6 @@ var REPORTS = (function($, window, document, undefined) {
             method: 'GET',
             // data: data,
             callbackSuccess: function(data) {
-            	pub.setCache(data);
                 pub.processData(data);
             },
             callbackError: function(data) {
@@ -46,6 +45,9 @@ var REPORTS = (function($, window, document, undefined) {
 		pub.members = pub.members.concat(response.data);
 		pub.current = pub.members.length;
 		pub.total = response.data[0].totalCount;
+
+		// update cache
+		pub.setCache({data: pub.members});
 
 		// update summary.
 		pub.updateSummary(pub.current, pub.total);
