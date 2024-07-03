@@ -251,17 +251,16 @@ var REPORTS = (function($, window, document, undefined) {
 			id: 'countriesChart',
 			title: 'Countries',
 			labels: Object.keys(REPORTS.countries),
-			data: Object.values(REPORTS.countries)//,
-			// bgColors: [
-	        //     'rgba(255, 99, 132, 0.2)',
-	        //     'rgba(54, 162, 235, 0.2)',
-	        //     'rgba(75, 192, 192, 0.2)'
-	        // ],
-	        // bdColors: [
-	        //     'rgba(255, 99, 132, 1)',
-	        //     'rgba(54, 162, 235, 1)',
-	        //     'rgba(75, 192, 192, 1)'
-	        // ]
+			data: Object.values(REPORTS.countries)
+		});
+
+		// Create Motives chart
+		pub.createChart({
+			type: 'doughnut',
+			id: 'motivesChart',
+			title: 'Countries',
+			labels: Object.keys(REPORTS.motives),
+			data: Object.values(REPORTS.motives)
 		});
 	}
 
