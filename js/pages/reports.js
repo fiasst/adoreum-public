@@ -224,11 +224,10 @@ var REPORTS = (function($, window, document, undefined) {
 			});
 
 			// Sort data by Object Key values.
-			HELP.sortObjectByKeys(REPORTS.genders);
-			HELP.sortObjectByKeys(REPORTS.countries);
-			HELP.sortObjectByKeys(REPORTS.motives);
-			HELP.sortObjectByKeys(REPORTS.ageRanges);
-			HELP.sortObjectByKeys(REPORTS.genders);
+			REPORTS.countries = HELP.sortObjectByKeys(REPORTS.countries);
+			REPORTS.motives = HELP.sortObjectByKeys(REPORTS.motives);
+			REPORTS.ageRanges = HELP.sortObjectByKeys(REPORTS.ageRanges);
+			REPORTS.genders = HELP.sortObjectByKeys(REPORTS.genders);
 
 			console.log(pub);
 			pub.generateCharts();
