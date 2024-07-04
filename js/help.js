@@ -369,6 +369,20 @@ HELP = (function($, window, document, undefined) {
 
 
     //
+    // Sort an Object by its Key values.
+    //
+    pub.sortObjectByKeys = function(obj) {
+        return Object.keys(obj).sort().reduce(
+          (o, key) => {
+            o[key] = obj[key];
+            return o;
+          },
+          {}
+        );
+    };
+
+
+    //
     // Useful for sorting an Array of businesses Objects by state.active appearing first.
     //
     pub.sortArrayByObjectValue = function(array, key, val, order = 'desc') {

@@ -218,11 +218,17 @@ var REPORTS = (function($, window, document, undefined) {
 				// TODO:
 					// Create a Admin link (for staff members only) in the sidebar menu. Hide it by default.
 					// Add:
-						// Total members (active subscribers with active plan)
 						// Primary membership city (new field*)
 					// Create dropdown list of countries in Register form...
 						// Make sure it autofills with Memberstack saved data in the edit profile form.
 			});
+
+			// Sort data by Object Key values.
+			HELP.sortObjectByKeys(REPORTS.genders);
+			HELP.sortObjectByKeys(REPORTS.countries);
+			HELP.sortObjectByKeys(REPORTS.motives);
+			HELP.sortObjectByKeys(REPORTS.ageRanges);
+			HELP.sortObjectByKeys(REPORTS.genders);
 
 			console.log(pub);
 			pub.generateCharts();
@@ -300,9 +306,9 @@ var REPORTS = (function($, window, document, undefined) {
 		        datasets: [{
 		            data: Object.values(REPORTS.genders),
 		            backgroundColor: [
-			            '#679FDF',
-			            '#DD7586',
-			            '#7FBBBE'
+			            '#5A99F0',
+			            '#DA5D6E',
+			            '#7DC9CC'
 			        ]
 		        }]
 		    },
