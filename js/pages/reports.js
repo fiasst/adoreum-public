@@ -144,8 +144,8 @@ var REPORTS = (function($, window, document, undefined) {
 			            	range = "96-105";
 			            }
 					}
+					updateValue(pub.ageRanges, range);
 				}
-				updateValue(pub.ageRanges, range);
 
 				// investors.
 				if (member.customFields.investor) {
