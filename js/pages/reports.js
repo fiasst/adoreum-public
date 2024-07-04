@@ -112,7 +112,7 @@ var REPORTS = (function($, window, document, undefined) {
 					let year = member.customFields['date-of-birth'].split('/')[2],
 						currentYear = new Date().getFullYear();
 
-					if (year) {
+					if (!!year) {
 			            const age = currentYear - parseInt(year.trim());
 			            let range;
 
@@ -398,8 +398,8 @@ var REPORTS = (function($, window, document, undefined) {
 		        datasets: [{
 		            data: Object.values(REPORTS.investors),
 		        	backgroundColor: [
-		        		'#DD7586',
-	            		'#7FBBBE'
+		        		'#D24A4B',
+	            		'#7DC9CC'
 		        	]
 		        }]
 		    },
