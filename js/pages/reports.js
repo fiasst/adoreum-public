@@ -110,12 +110,12 @@ var REPORTS = (function($, window, document, undefined) {
 				// age.
 				if (member.customFields['date-of-birth']) {
 					let year = member.customFields['date-of-birth'].split('/')[2],
-						currentYear = new Date().getFullYear();
+						currentYear = new Date().getFullYear(),
+						range = 'Unknown';
 
 					if (!!year) {
 			            const age = currentYear - parseInt(year.trim());
-			            let range;
-
+			            
 			            if (age >= 16 && age <= 25) {
 			            	range = "16-25";
 			            }
@@ -143,12 +143,9 @@ var REPORTS = (function($, window, document, undefined) {
 			            else if (age >= 96 && age <= 105) {
 			            	range = "96-105";
 			            }
-				        updateValue(pub.ageRanges, range);
 					}
 				}
-				else {
-					updateValue(pub.ageRanges, 'Unknown');
-				}
+				updateValue(pub.ageRanges, range);
 
 				// investors.
 				if (member.customFields.investor) {
