@@ -51,8 +51,6 @@ var REPORTS = (function($, window, document, undefined) {
 
 	// Callback function to process all members data.
 	pub.processData = (response, useCache) => {
-		console.log(response);
-
 		// set/update vars.
 		pub.members = pub.members.concat(response.data);
 		pub.current = pub.members.length;
@@ -94,8 +92,16 @@ var REPORTS = (function($, window, document, undefined) {
 				}
 				else {
 					updateValue(pub.countries, 'Unknown');
-
 				}
+
+				// primary city.
+				if (member.customFields.primarycity) {
+					updateValue(pub.primarycity, member.customFields.primarycity);
+				}
+				else {
+					updateValue(pub.primarycity, 'Unknown');
+				}
+
 
 				// motives.
 				if (member.customFields.motive) {
@@ -161,6 +167,14 @@ var REPORTS = (function($, window, document, undefined) {
 					updateValue(pub.joined, `${year}-${month}`);
 				}
 
+				// referrer.
+				if (member.customFields.referrer) {
+					updateValue(pub.referrer, member.customFields.referrer);
+				}
+				else {
+					updateValue(pub.referrer, 'Unknown');
+				}
+
 				// plans.
 				if (member.planConnections) {
 					let subStatus = [],
@@ -179,7 +193,6 @@ var REPORTS = (function($, window, document, undefined) {
 									break;
 								case "TRIALING":
 									subStatus.push('trialing');
-									console.log(member);
 									break;
 								case "PAST_DUE":
 									subStatus.push('past_due');
@@ -213,11 +226,13 @@ var REPORTS = (function($, window, document, undefined) {
 				}
 
 				// TODO:
-					// Create a Admin link (for staff members only) in the sidebar menu. Hide it by default.
-					// Add:
-						// Primary membership city (new field*)
+					// Add member_id to the request to check that the member has the required permission to view "all member" data.
 					// Create dropdown list of countries in Register form...
 						// Make sure it autofills with Memberstack saved data in the edit profile form.
+					// Add:
+						// Primary membership city (new field*)
+					// Create a Admin link (for staff members only) in the sidebar menu. Hide it by default.
+					
 			});
 
 			// Sort data by Object Key values.
@@ -226,7 +241,6 @@ var REPORTS = (function($, window, document, undefined) {
 			REPORTS.ageRanges = HELP.sortObjectByKeys(REPORTS.ageRanges);
 			REPORTS.genders = HELP.sortObjectByKeys(REPORTS.genders);
 
-			console.log(pub);
 			pub.generateCharts();
 		}
 	}
@@ -300,12 +314,7 @@ var REPORTS = (function($, window, document, undefined) {
 	        data: {
 		        labels: Object.keys(REPORTS.genders),
 		        datasets: [{
-		            data: Object.values(REPORTS.genders),
-		            backgroundColor: [
-			            '#5A99F0',
-			            '#DA5D6E',
-			            '#7DC9CC'
-			        ]
+		            data: Object.values(REPORTS.genders)
 		        }]
 		    },
 	        options: {
@@ -328,6 +337,28 @@ var REPORTS = (function($, window, document, undefined) {
 		        labels: Object.keys(REPORTS.countries),
 		        datasets: [{
 		            data: Object.values(REPORTS.countries)
+		        }]
+		    },
+	        options: {
+	            responsive: true,
+	            plugins: {
+	                legend: {
+	                    position: 'top'
+	                },
+	                tooltip: {
+	                    enabled: true
+	                }
+	            }
+	        }
+	    });
+
+	    // Create Primary City chart
+	    pub.createChart('primaryCityChart', {
+	        type: 'doughnut',
+	        data: {
+		        labels: Object.keys(REPORTS.primarycity),
+		        datasets: [{
+		            data: Object.values(REPORTS.primarycity)
 		        }]
 		    },
 	        options: {
@@ -482,6 +513,28 @@ var REPORTS = (function($, window, document, undefined) {
 	            plugins: {
 	                legend: {
 	                    display: false
+	                },
+	                tooltip: {
+	                    enabled: true
+	                }
+	            }
+	        }
+	    });
+
+	    // Create Referrer chart
+	    pub.createChart('referrerChart', {
+	        type: 'doughnut',
+	        data: {
+		        labels: Object.keys(REPORTS.referrer),
+		        datasets: [{
+		            data: Object.values(REPORTS.referrer)
+		        }]
+		    },
+	        options: {
+	            responsive: true,
+	            plugins: {
+	                legend: {
+	                    position: 'top'
 	                },
 	                tooltip: {
 	                    enabled: true
