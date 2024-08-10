@@ -19,10 +19,12 @@ var REPORTS = (function($, window, document, undefined) {
 	// reports data.
 	pub.genders = {};
 	pub.countries = {};
+	pub.primarycity = {};
 	pub.motives = {};
 	pub.ageRanges = {};
 	pub.investors = {};
 	pub.joined = {};
+	pub.referrer = {};
 	pub.plans = {};
     pub.subscriberStatus = [];
 
