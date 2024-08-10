@@ -97,8 +97,8 @@ var REPORTS = (function($, window, document, undefined) {
 				}
 
 				// primary city.
-				if (member.customFields.primarycity) {
-					updateValue(pub.primarycity, member.customFields.primarycity);
+				if (member.customFields['primary-city']) {
+					updateValue(pub.primarycity, member.customFields['primary-city']);
 				}
 				else {
 					updateValue(pub.primarycity, 'Unknown');
