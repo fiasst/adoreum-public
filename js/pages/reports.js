@@ -32,22 +32,28 @@ var REPORTS = (function($, window, document, undefined) {
     // Get all members for reports dashboard.
     pub.getMemberData = (after) => {
     	let endCursor = after ? '&after='+after : '';
+
+    	// Get current Member.
+        USER.getCurrentMember(function(member) {
+            if (HELP.checkKeyExists(member, 'id')) {
 	    	
-	    // Show thinking icon
-        MAIN.thinking(true);
-        // Load data
-		HELP.sendAJAX({
-            url: 'https://hook.eu2.make.com/72hi83eco73yt3iipj5ua0dctpb5sl35?hasNextPage=true'+endCursor,
-            method: 'GET',
-            // data: data,
-            callbackSuccess: function(data) {
-                pub.processData(data);
-            },
-            callbackError: function(data) {
-                MAIN.thinking(false);
-                console.log('error');
-            }
-        }, false);
+			    // Show thinking icon
+		        MAIN.thinking(true);
+		        // Load data
+				HELP.sendAJAX({
+		            url: 'https://hook.eu2.make.com/72hi83eco73yt3iipj5ua0dctpb5sl35?hasNextPage=true&id='+member.id+endCursor,
+		            method: 'GET',
+		            // data: data,
+		            callbackSuccess: function(data) {
+		                pub.processData(data);
+		            },
+		            callbackError: function(data) {
+		                MAIN.thinking(false);
+		                console.log('error');
+		            }
+		        }, false);
+			}
+		});
 	}
 
 
@@ -97,8 +103,8 @@ var REPORTS = (function($, window, document, undefined) {
 				}
 
 				// primary city.
-				if (member.customFields['primary-city']) {
-					updateValue(pub.primarycity, member.customFields['primary-city']);
+				if (member.customFields.primarycity) {
+					updateValue(pub.primarycity, member.customFields.primarycity);
 				}
 				else {
 					updateValue(pub.primarycity, 'Unknown');
@@ -229,10 +235,6 @@ var REPORTS = (function($, window, document, undefined) {
 
 				// TODO:
 					// Add member_id to the request to check that the member has the required permission to view "all member" data.
-					// Create dropdown list of countries in Register form...
-						// Make sure it autofills with Memberstack saved data in the edit profile form.
-					// Add:
-						// Primary membership city (new field*)
 					// Create a Admin link (for staff members only) in the sidebar menu. Hide it by default.
 					
 			});
