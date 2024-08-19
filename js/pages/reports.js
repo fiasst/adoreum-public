@@ -31,11 +31,10 @@ var REPORTS = (function($, window, document, undefined) {
 
     // Get all members for reports dashboard.
     pub.getMemberData = (after) => {
-    	let endCursor = after ? '&after='+after : '';
-
     	// Get current Member.
         USER.getCurrentMember(function(member) {
             if (HELP.checkKeyExists(member, 'id')) {
+    			let endCursor = after ? '&after='+after : '';
 	    	
 			    // Show thinking icon
 		        MAIN.thinking(true);
