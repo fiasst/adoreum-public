@@ -285,19 +285,38 @@ var MAIN = (function($, window, document, undefined) {
         // Cookie consent banner.
         //
         var $consentBanner = $('#cookie-consent');
-        // Check if the consent cookie exists.
+        // Function to remove non-functional cookies (example, you may need to adjust based on actual cookie names)
+        function removeNonFunctionalCookies() {
+            // List of non-functional cookies to remove, if any exist
+            var cookies = [];//['analytics_cookie', 'marketing_cookie'];
+            cookies.forEach(function(cookieName) {
+                HELP.deleteCookie(cookieName);
+            });
+        }
+        // Check if the consent cookie exists
         if (!HELP.getCookie('adoreum_consent')) {
-            // Cookie not found, show the consent element.
+            // Cookie not found, show the consent element
             $consentBanner.removeClass('hide');
         }
-        // Handle close button click
-        $consentBanner.on('click', '.consent-close', function(e) {
+        // Handle Accept button click
+        $consentBanner.on('click', '.consent-accept', function(e) {
             e.preventDefault();
-            // Set the consent cookie to 'true'.
+            // Set the consent cookie to 'true'
             HELP.setCookie('adoreum_consent', 'true', 365);
-            // Hide the consent element.
+            // Hide the consent element
             $consentBanner.remove();
         });
+        // Handle Decline button click
+        $consentBanner.on('click', '.consent-decline', function(e) {
+            e.preventDefault();
+            // Set the consent cookie to 'false' to indicate refusal
+            HELP.setCookie('adoreum_consent', 'false', 365);
+            // Remove non-functional cookies
+            removeNonFunctionalCookies();
+            // Hide the consent element
+            $consentBanner.remove();
+        });
+
 
 
         //

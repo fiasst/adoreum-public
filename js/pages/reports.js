@@ -231,10 +231,6 @@ var REPORTS = (function($, window, document, undefined) {
 					}
 					updateValue(pub.subscriberStatus, status);
 				}
-
-				// TODO:
-					// Add member_id to the request to check that the member has the required permission to view "all member" data.
-					// Create a Admin link (for staff members only) in the sidebar menu. Hide it by default.
 					
 			});
 
