@@ -553,7 +553,7 @@ var REPORTS = (function($, window, document, undefined) {
 
 		// Process the data and add rows dynamically
         var tableMembers = $('#members-table')
-			.on('draw.dt', () => {
+			.on('draw.dt', function() {
 		        MAIN.thinking(false);
 			})
         	.DataTable({
@@ -565,6 +565,25 @@ var REPORTS = (function($, window, document, undefined) {
 			    order: [[12, 'asc'], [13, 'asc']],// First sort by payment.status (asc), then by payment.nextBillingDate (asc)
 			    search: {
 			        return: true
+			    },
+			    layout: {
+			        topStart: function() {
+			            // Build the list of checkboxes based on table headers
+					    var $dropdown = $('div#column-list');
+					    $('#members-table thead th').each(function(index) {
+					        var columnTitle = $(this).text(),// Get the text of the <th>
+					        	$item = $('<li><label><input type="checkbox" checked>'+ columnTitle +'</label></li>');
+
+					        // Append the checkbox to the container
+					        $('ul', $dropdown).append($item);
+
+					        // Attach a change event to show/hide the corresponding column
+					        $('input', $item).on('change', function() {
+					            tableMembers.column(index).visible( $(this).is(':checked') );// Show/hide the column
+					        });
+					    });
+					    return $dropdown;
+			        }
 			    }
 			});
 
@@ -617,22 +636,8 @@ var REPORTS = (function($, window, document, undefined) {
 		        });
 		    }
 		});
-		$('#members-table_filter, #members-table_length').appendTo('.members-live .head');
-		$('#members-table_paginate, #members-table_info').appendTo('.members-live .foot');
-
-		// Build the list of checkboxes based on table headers
-	    $('#members-table thead th').each(function(index) {
-	        var columnTitle = $(this).text(),// Get the text of the <th>
-	        	$item = $('<li><label><input type="checkbox" checked>'+ columnTitle +'</label></li>');
-
-	        // Append the checkbox to the container
-	        $('#column-list ul').append($item);
-
-	        // Attach a change event to show/hide the corresponding column
-	        $('input', $item).on('change', function() {
-	            tableMembers.column(index).visible( $(this).is(':checked') );// Show/hide the column
-	        });
-	    });
+		// $('#members-table_filter, #members-table_length').appendTo('.members-live .head');
+		// $('#members-table_paginate, #members-table_info').appendTo('.members-live .foot');
 	}
 
 
