@@ -549,12 +549,11 @@ var REPORTS = (function($, window, document, undefined) {
 
 	function liveTable(members) {
 		// Process the data and add rows dynamically
-        var table = $('#members-live').DataTable();
+        var table = $('#members-table').DataTable();
 
         members.forEach(function(member) {
 		    let data = [
-		        member.id,
-		        member.createdAt,
+		        `<a href="https://app.memberstack.com/apps/app_cllao1xky00gp0t4gd37g6u4b/members/${member.id}/profile">${member.name}</a>`,
 		        member.customFields.gender || 'N/A',
 		        member.customFields.motive || 'N/A',
 		        member.customFields.country || 'N/A',
@@ -562,7 +561,7 @@ var REPORTS = (function($, window, document, undefined) {
 		        member.customFields.primarycity || 'N/A',
 		        member.customFields.canaccessapp || 'N/A',
 		        member.customFields['date-of-birth'] || 'N/A',
-		        member.customFields.canaccessevents || 'N/A'
+		        member.createdAt
 		    ];
 
 		    // If there are no plan connections, we still add the base data
@@ -575,11 +574,11 @@ var REPORTS = (function($, window, document, undefined) {
 		        	if (plan.type == 'SUBSCRIPTION') {
 			            let planData = [
 			                plan.planName || 'N/A',
-			                plan.type || 'N/A',
 			                plan.status || 'N/A',
 			                plan.payment ? plan.payment.amount || 'N/A' : 'N/A',
 			                plan.payment ? plan.payment.currency || 'N/A' : 'N/A',
-			                plan.payment ? plan.payment.status || 'N/A' : 'N/A'
+			                plan.payment ? plan.payment.status || 'N/A' : 'N/A',
+			                plan.payment ? plan.payment.nextBillingDate || '-' : '-'
 			            ];
 
 			            // Add a row combining base data and plan data
