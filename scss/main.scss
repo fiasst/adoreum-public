@@ -56,6 +56,28 @@ textarea {
 
 /*
 *
+* Tables.
+*
+*/
+.responsive {
+  overflow-x: auto;
+}
+#members-table {
+  min-width: 1800px;
+
+  thead {
+    text-align: left;
+  }
+  th,
+  td {
+    padding: .5em;
+  }
+}
+
+
+
+/*
+*
 * LitBox.
 *
 */

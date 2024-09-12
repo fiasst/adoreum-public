@@ -549,11 +549,22 @@ var REPORTS = (function($, window, document, undefined) {
 
 	function liveTable(members) {
 		// Process the data and add rows dynamically
-        var table = $('#members-table').DataTable();
+        var table = $('#members-table').DataTable({
+        	pageLength: 100,
+        	lengthMenu: [
+		        [50, 100, -1],
+		        [50, 100, 'All']
+		    ],
+		    order: [[13, 'asc'], [14, 'asc']],// First sort by payment.status (asc), then by payment.nextBillingDate (asc)
+		    search: {
+		        return: true
+		    },
+		    scrollX: true
+		});
 
         members.forEach(function(member) {
 		    let data = [
-		        `<a href="https://app.memberstack.com/apps/app_cllao1xky00gp0t4gd37g6u4b/members/${member.id}/profile">${member.name}</a>`,
+		        `<a href="https://app.memberstack.com/apps/app_cllao1xky00gp0t4gd37g6u4b/members/${member.id}/profile">${member.customFields.name}</a>`,
 		        member.customFields.gender || 'N/A',
 		        member.customFields.motive || 'N/A',
 		        member.customFields.country || 'N/A',
@@ -587,6 +598,8 @@ var REPORTS = (function($, window, document, undefined) {
 		        });
 		    }
 		});
+        // $('#members-table_filter, #members-table_length').appendTo('#members-table .head');
+		// $('#members-table_info, #members-table_paginate').appendTo('#members-table .base');
 	}
 
 
