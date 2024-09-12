@@ -623,7 +623,7 @@ var REPORTS = (function($, window, document, undefined) {
 		// Build the list of checkboxes based on table headers
 	    $('#members-table thead th').each(function(index) {
 	        var columnTitle = $(this).text(),// Get the text of the <th>
-	        	$item = $('<label><input type="checkbox" checked>'+ columnTitle +'</label>');
+	        	$item = $('<li><input type="checkbox" checked>'+ columnTitle +'</li>');
 
 	        // Append the checkbox to the container
 	        $('#column-list ul').append($item);
