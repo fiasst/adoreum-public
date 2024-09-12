@@ -563,21 +563,23 @@ var REPORTS = (function($, window, document, undefined) {
 		});
 
         members.forEach(function(member) {
+        	var motives = member.customFields.motive.split('|').join(', ');
+        	
 		    let data = [
 		        `<a href="https://app.memberstack.com/apps/app_cllao1xky00gp0t4gd37g6u4b/members/${member.id}/profile" target="_blank">${member.customFields.name}</a>`,
-		        member.customFields.gender || 'N/A',
-		        member.customFields.motive || 'N/A',
-		        member.customFields.country || 'N/A',
-		        member.customFields.investor || 'N/A',
-		        member.customFields.primarycity || 'N/A',
-		        member.customFields.canaccessapp || 'N/A',
-		        member.customFields['date-of-birth'] || 'N/A',
+		        member.customFields.gender || '',
+		        member.customFields.country || '',
+		        member.customFields.primarycity || '',
+		        member.customFields['date-of-birth'] || '',
+		        motives || '',
+		        member.customFields.investor || '',
+		        member.customFields.canaccessapp || '',
 		        HELP.formatTimestamp(member.createdAt)
 		    ];
 
 		    // If there are no plan connections, we still add the base data
 		    if (member.planConnections.length === 0) {
-		        table.row.add(data.concat(['N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A'])).draw();
+		        table.row.add(data.concat(['', '', '', '', ''])).draw();
 		    }
 		    else {
 		        // Loop through planConnections and add rows for each plan
@@ -602,15 +604,12 @@ var REPORTS = (function($, window, document, undefined) {
 			                plan.payment ? plan.payment.status || 'N/A' : 'N/A',
 			                billingDate
 			            ];
-
 			            // Add a row combining base data and plan data
 			            table.row.add(data.concat(planData)).draw();
 			        }
 		        });
 		    }
 		});
-        // $('#members-table_filter, #members-table_length').appendTo('#members-table .head');
-		// $('#members-table_info, #members-table_paginate').appendTo('#members-table .base');
 	}
 
 
