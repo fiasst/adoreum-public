@@ -643,7 +643,8 @@ var REPORTS = (function($, window, document, undefined) {
 		// $('#members-table_paginate, #members-table_info').appendTo('.members-live .foot');
 
 
-		var $dropdown = $('div#column-list');
+		var $dropdown = $('<div id="column-list"><ul></ul></div>');
+		$dropdown.append('ul');
 	    $('#members-table thead th').each(function(index) {
 	        var columnTitle = $(this).text(),// Get the text of the <th>
 	        	$item = $('<li><label><input type="checkbox" checked>'+ columnTitle +'</label></li>');
@@ -656,7 +657,7 @@ var REPORTS = (function($, window, document, undefined) {
 	            tableMembers.column(index).visible( $(this).is(':checked') );// Show/hide the column
 	        });
 	    });
-	    $('#members-live .dt-layout-row:first-child').append($dropdown);
+	    $('#members-live-wrapper .dt-layout-row:first-child').append($dropdown);
 	}
 
 
