@@ -567,7 +567,7 @@ var REPORTS = (function($, window, document, undefined) {
 			        return: true
 			    },
 			    layout: {
-			        topStart: function() {
+			        top1: function() {
 			            // Build the list of checkboxes based on table headers
 					    var $dropdown = $('div#column-list');
 					    $('#members-table thead th').each(function(index) {
@@ -583,7 +583,9 @@ var REPORTS = (function($, window, document, undefined) {
 					        });
 					    });
 					    return $dropdown;
-			        }
+			        },
+			        top2Start: pageLength,
+			        top2End: search
 			    }
 			});
 
