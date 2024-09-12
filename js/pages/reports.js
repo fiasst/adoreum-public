@@ -584,8 +584,8 @@ var REPORTS = (function($, window, document, undefined) {
 					    });
 					    return $dropdown;
 			        },
-			        top2Start: pageLength,
-			        top2End: search
+			        top2Start: 'pageLength',
+			        top2End: 'search'
 			    }
 			});
 
