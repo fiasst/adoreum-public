@@ -566,28 +566,6 @@ var REPORTS = (function($, window, document, undefined) {
 			    search: {
 			        return: true
 			    }
-			    //,
-			    // layout: {
-			    //     top1: function() {
-			    //         // Build the list of checkboxes based on table headers
-				// 	    var $dropdown = $('div#column-list');
-				// 	    $('#members-table thead th').each(function(index) {
-				// 	        var columnTitle = $(this).text(),// Get the text of the <th>
-				// 	        	$item = $('<li><label><input type="checkbox" checked>'+ columnTitle +'</label></li>');
-
-				// 	        // Append the checkbox to the container
-				// 	        $('ul', $dropdown).append($item);
-
-				// 	        // Attach a change event to show/hide the corresponding column
-				// 	        $('input', $item).on('change', function() {
-				// 	            tableMembers.column(index).visible( $(this).is(':checked') );// Show/hide the column
-				// 	        });
-				// 	    });
-				// 	    return $dropdown;
-			    //     },
-			    //     top2Start: 'pageLength',
-			    //     top2End: 'search'
-			    // }
 			});
 
         members.forEach(function(member) {
@@ -639,10 +617,8 @@ var REPORTS = (function($, window, document, undefined) {
 		        });
 		    }
 		});
-		// $('#members-table_filter, #members-table_length').appendTo('.members-live .head');
-		// $('#members-table_paginate, #members-table_info').appendTo('.members-live .foot');
 
-
+        // Create Columns dropdown filter
 		var $dropdown = $('<div id="column-list" class="dropdown"><div class="label">Columns</div><ul></ul></div>');
 	    $('#members-table thead th').each(function(index) {
 	        var columnTitle = $(this).text(),// Get the text of the <th>
@@ -653,10 +629,11 @@ var REPORTS = (function($, window, document, undefined) {
 
 	        // Attach a change event to show/hide the corresponding column
 	        $('input', $item).on('change', function() {
-	            tableMembers.column(index).visible( $(this).is(':checked') );// Show/hide the column
+	            tableMembers.column(index).visible( $(this).is(':checked') );// Show/hide column
 	        });
 	    });
-	    $('#members-live-wrapper .dt-layout-row:first-child').append($dropdown);
+	    // Move filters to .head element
+	    $('#members-live-wrapper .head').append([$dropdown, $('#members-live-wrapper .dt-layout-row:first-child')]);
 	}
 
 
