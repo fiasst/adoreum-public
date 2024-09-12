@@ -616,8 +616,8 @@ var REPORTS = (function($, window, document, undefined) {
 		        });
 		    }
 		});
-		$('#members-table_filter, #members-table_length').appendTo('#members-live .head');
-		$('#members-table_paginate, #members-table_info').appendTo('#members-live .foot');
+		$('#members-table_filter, #members-table_length').appendTo('.members-live .head');
+		$('#members-table_paginate, #members-table_info').appendTo('.members-live .foot');
 	}
 
 
