@@ -550,12 +550,12 @@ var REPORTS = (function($, window, document, undefined) {
 	function liveTable(members) {
 		// Process the data and add rows dynamically
         var table = $('#members-table').DataTable({
-        	pageLength: 100,
         	lengthMenu: [
 		        [50, 100, -1],
 		        [50, 100, 'All']
 		    ],
-		    order: [[13, 'asc'], [14, 'asc']],// First sort by payment.status (asc), then by payment.nextBillingDate (asc)
+        	pageLength: 50,
+		    order: [[12, 'asc'], [13, 'asc']],// First sort by payment.status (asc), then by payment.nextBillingDate (asc)
 		    search: {
 		        return: true
 		    },
@@ -583,11 +583,14 @@ var REPORTS = (function($, window, document, undefined) {
 		        // Loop through planConnections and add rows for each plan
 		        member.planConnections.forEach(function(plan) {
 		        	if (plan.type == 'SUBSCRIPTION') {
+		        		var amount = 'N/A';
+		        		if (plan.payment && plan.payment.amount) {
+		        			amount = (plan.payment.currency == 'gbp' ? '£'+plan.payment.amount : plan.payment.amount+' '+plan.payment.currency);
+		        		}
 			            let planData = [
 			                plan.planName || 'N/A',
 			                plan.status || 'N/A',
-			                plan.payment ? plan.payment.amount || 'N/A' : 'N/A',
-			                plan.payment ? plan.payment.currency || 'N/A' : 'N/A',
+			                amount,
 			                plan.payment ? plan.payment.status || 'N/A' : 'N/A',
 			                plan.payment ? plan.payment.nextBillingDate || '-' : '-'
 			            ];
