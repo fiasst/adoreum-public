@@ -86,7 +86,10 @@ var REPORTS = (function($, window, document, undefined) {
 				}
 			}
 
-			// Compile data.
+			// create Members live table view.
+			liveTable(pub.members);
+
+			// Compile Overview.
 			$.each(pub.members, (i, member) => {
 				// gender.
 				if (member.customFields.gender) {
@@ -541,6 +544,50 @@ var REPORTS = (function($, window, document, undefined) {
 	            }
 	        }
 	    });
+	}
+
+
+	function liveTable(members) {
+		// Process the data and add rows dynamically
+        var table = $('#members-live').DataTable();
+
+        members.forEach(function(member) {
+		    let data = [
+		        member.id,
+		        member.createdAt,
+		        member.customFields.gender || 'N/A',
+		        member.customFields.motive || 'N/A',
+		        member.customFields.country || 'N/A',
+		        member.customFields.investor || 'N/A',
+		        member.customFields.primarycity || 'N/A',
+		        member.customFields.canaccessapp || 'N/A',
+		        member.customFields['date-of-birth'] || 'N/A',
+		        member.customFields.canaccessevents || 'N/A'
+		    ];
+
+		    // If there are no plan connections, we still add the base data
+		    if (member.planConnections.length === 0) {
+		        table.row.add(data.concat(['N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A'])).draw();
+		    }
+		    else {
+		        // Loop through planConnections and add rows for each plan
+		        member.planConnections.forEach(function(plan) {
+		        	if (plan.type == 'SUBSCRIPTION') {
+			            let planData = [
+			                plan.planName || 'N/A',
+			                plan.type || 'N/A',
+			                plan.status || 'N/A',
+			                plan.payment ? plan.payment.amount || 'N/A' : 'N/A',
+			                plan.payment ? plan.payment.currency || 'N/A' : 'N/A',
+			                plan.payment ? plan.payment.status || 'N/A' : 'N/A'
+			            ];
+
+			            // Add a row combining base data and plan data
+			            table.row.add(data.concat(planData)).draw();
+			        }
+		        });
+		    }
+		});
 	}
 
 
