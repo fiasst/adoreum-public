@@ -563,15 +563,15 @@ var REPORTS = (function($, window, document, undefined) {
 		});
 
         members.forEach(function(member) {
-        	var motives = member.customFields.motive.split('|').join(', ');
-        	
+        	var motives = member.customFields.motive ? member.customFields.motive.split('|').join(', ') : '';
+
 		    let data = [
 		        `<a href="https://app.memberstack.com/apps/app_cllao1xky00gp0t4gd37g6u4b/members/${member.id}/profile" target="_blank">${member.customFields.name}</a>`,
 		        member.customFields.gender || '',
 		        member.customFields.country || '',
 		        member.customFields.primarycity || '',
 		        member.customFields['date-of-birth'] || '',
-		        motives || '',
+		        motives,
 		        member.customFields.investor || '',
 		        member.customFields.canaccessapp || '',
 		        HELP.formatTimestamp(member.createdAt)
