@@ -564,7 +564,7 @@ var REPORTS = (function($, window, document, undefined) {
 
         members.forEach(function(member) {
 		    let data = [
-		        `<a href="https://app.memberstack.com/apps/app_cllao1xky00gp0t4gd37g6u4b/members/${member.id}/profile">${member.customFields.name}</a>`,
+		        `<a href="https://app.memberstack.com/apps/app_cllao1xky00gp0t4gd37g6u4b/members/${member.id}/profile" target="_blank">${member.customFields.name}</a>`,
 		        member.customFields.gender || 'N/A',
 		        member.customFields.motive || 'N/A',
 		        member.customFields.country || 'N/A',
@@ -572,7 +572,7 @@ var REPORTS = (function($, window, document, undefined) {
 		        member.customFields.primarycity || 'N/A',
 		        member.customFields.canaccessapp || 'N/A',
 		        member.customFields['date-of-birth'] || 'N/A',
-		        member.createdAt
+		        HELP.formatTimestamp(member.createdAt)
 		    ];
 
 		    // If there are no plan connections, we still add the base data
@@ -583,16 +583,24 @@ var REPORTS = (function($, window, document, undefined) {
 		        // Loop through planConnections and add rows for each plan
 		        member.planConnections.forEach(function(plan) {
 		        	if (plan.type == 'SUBSCRIPTION') {
-		        		var amount = 'N/A';
+		        		var amount = '';
 		        		if (plan.payment && plan.payment.amount) {
-		        			amount = (plan.payment.currency == 'gbp' ? '£'+plan.payment.amount : plan.payment.amount+' '+plan.payment.currency);
+		        			var sum = HELP.formatCurrency(plan.payment.amount);
+		        			amount = (plan.payment.currency == 'gbp' ? '£'+sum : sum+' '+plan.payment.currency);
 		        		}
+
+		        		var billingDate = '';
+		        		if (plan.payment && plan.payment.nextBillingDate) {
+		        			var timestamp = HELP.ISOToTimestamp(plan.payment.nextBillingDate);
+		        			billingDate = HELP.formatTimestamp(timestamp, false, true);
+		        		}
+
 			            let planData = [
 			                plan.planName || 'N/A',
 			                plan.status || 'N/A',
 			                amount,
 			                plan.payment ? plan.payment.status || 'N/A' : 'N/A',
-			                plan.payment ? plan.payment.nextBillingDate || '-' : '-'
+			                billingDate
 			            ];
 
 			            // Add a row combining base data and plan data

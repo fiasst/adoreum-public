@@ -266,7 +266,16 @@ HELP = (function($, window, document, undefined) {
 
         return Date.parse(date);
     };
-    
+
+
+    //
+    // Convert ISO date String (2023-08-23T04:53:34.000Z) to a timestamp.
+    //
+    pub.ISOToTimestamp = (dateString) => {
+        const date = new Date(dateString);
+        return date.getTime();
+    };
+
 
     //
     // Convert a timestamp into an ISO date format (ex: 2023-08-23T04:53:34.000Z)
