@@ -643,8 +643,7 @@ var REPORTS = (function($, window, document, undefined) {
 		// $('#members-table_paginate, #members-table_info').appendTo('.members-live .foot');
 
 
-		var $dropdown = $('<div id="column-list"><ul></ul></div>');
-		$dropdown.append('ul');
+		var $dropdown = $('<div id="column-list" class="dropdown"><div class="label">Columns</div><ul></ul></div>');
 	    $('#members-table thead th').each(function(index) {
 	        var columnTitle = $(this).text(),// Get the text of the <th>
 	        	$item = $('<li><label><input type="checkbox" checked>'+ columnTitle +'</label></li>');
