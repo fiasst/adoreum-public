@@ -318,6 +318,24 @@ var MAIN = (function($, window, document, undefined) {
         });
 
 
+        //
+        // Dropdown menus.
+        //
+        $(document).on('click.dropdowns', function(e) {
+            var $dropdown = $('.dropdown');
+
+            // Check if the clicked element is the first <label> inside the .dropdown
+            if ($(e.target).closest('.dropdown > label:first-child').length) {
+                var ul = $(e.target).siblings('ul:first');// Get the first sibling <ul>
+                ul.toggle();// Toggle the visibility of the <ul>
+            }
+            else if (!$(e.target).closest('.dropdown').length) {
+                // If clicked outside of .dropdown, hide the <ul>
+                $dropdown.find('ul').hide();
+            }
+        });
+
+
 
         //
         // General Litbox trigger handler.
