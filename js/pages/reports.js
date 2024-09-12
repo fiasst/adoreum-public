@@ -552,8 +552,8 @@ var REPORTS = (function($, window, document, undefined) {
 		MAIN.thinking(true);
 
 		// Process the data and add rows dynamically
-        var table = $('#members-table')
-			.on('init.dt', () => {
+        var tableMembers = $('#members-table')
+			.on('init', () => {
 		        MAIN.thinking(false);
 			})
         	.DataTable({
@@ -586,7 +586,7 @@ var REPORTS = (function($, window, document, undefined) {
 
 		    // If there are no plan connections, we still add the base data
 		    if (member.planConnections.length === 0) {
-		        table.row.add(data.concat(['', '', '', '', ''])).draw();
+		        tableMembers.row.add(data.concat(['', '', '', '', ''])).draw();
 		    }
 		    else {
 		        // Loop through planConnections and add rows for each plan
@@ -612,13 +612,27 @@ var REPORTS = (function($, window, document, undefined) {
 			                billingDate
 			            ];
 			            // Add a row combining base data and plan data
-			            table.row.add(data.concat(planData)).draw();
+			            tableMembers.row.add(data.concat(planData)).draw();
 			        }
 		        });
 		    }
 		});
 		$('#members-table_filter, #members-table_length').appendTo('.members-live .head');
 		$('#members-table_paginate, #members-table_info').appendTo('.members-live .foot');
+
+		// Build the list of checkboxes based on table headers
+	    $('#members-table thead th').each(function(index) {
+	        var columnTitle = $(this).text(),// Get the text of the <th>
+	        	$item = $('<label><input type="checkbox" checked>'+ columnTitle +'</label>');
+
+	        // Append the checkbox to the container
+	        $('#column-list ul').append($item);
+
+	        // Attach a change event to show/hide the corresponding column
+	        $('input', $item).on('change', function() {
+	            tableMembers.column(index).visible( $(this).is(':checked') );// Show/hide the column
+	        });
+	    });
 	}
 
 
