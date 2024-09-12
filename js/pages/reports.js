@@ -627,12 +627,14 @@ var REPORTS = (function($, window, document, undefined) {
 
 	        // Append the checkbox to the container
 	        $('ul', $dropdown).append($item);
-
-	        // Attach a change event to show/hide the corresponding column
-	        $('input', $item).on('change', function() {
-	            tableMembers.column(index).visible( $(this).is(':checked') );// Show/hide column
-	        });
 	    });
+	    // Update label with (X) number
+	    $('.label', $dropdown).text(`${$dropdown.data('label')} (${$dropdown.find('input:checked').length})`);
+
+        // Attach a change event to show/hide the corresponding column
+        $('input', $dropdown).on('change', function() {
+            tableMembers.column(index).visible( $(this).is(':checked') );// Show/hide column
+        });
 	    // Move filters to .head element
 	    $('#members-live-wrapper .head').append([$dropdown, $('#members-live-wrapper .dt-layout-row:first-child')]);
 	}
