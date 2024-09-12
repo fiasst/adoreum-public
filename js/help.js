@@ -134,6 +134,12 @@ HELP = (function($, window, document, undefined) {
 
 
     //
+    // Format thousands.
+    //
+    pub.formatThousands = (number) => number.toLocaleString();
+
+
+    //
     // Get $£€ etc symbols.
     //
     pub.getCurrencySymbol = (locale, currency) => {

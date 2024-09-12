@@ -573,6 +573,7 @@ var REPORTS = (function($, window, document, undefined) {
 
 		    let data = [
 		        `<a href="https://app.memberstack.com/apps/app_cllao1xky00gp0t4gd37g6u4b/members/${member.id}/profile" target="_blank">${member.customFields.name}</a>`,
+		        member.customFields.company || '',
 		        member.customFields.gender || '',
 		        member.customFields.country || '',
 		        member.customFields.primarycity || '',
@@ -593,7 +594,7 @@ var REPORTS = (function($, window, document, undefined) {
 		        	if (plan.type == 'SUBSCRIPTION') {
 		        		var amount = '';
 		        		if (plan.payment && plan.payment.amount) {
-		        			var sum = HELP.formatCurrency(plan.payment.amount);
+		        			var sum = HELP.formatThousands(plan.payment.amount);
 		        			amount = (plan.payment.currency == 'gbp' ? '£'+sum : sum+' '+plan.payment.currency);
 		        		}
 
