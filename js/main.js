@@ -324,8 +324,8 @@ var MAIN = (function($, window, document, undefined) {
         $(document).on('click.dropdowns', function(e) {
             var $dropdown = $('.dropdown');
 
-            // Check if the clicked element is the first <label> inside the .dropdown
-            if ($(e.target).closest('.dropdown > label:first-child').length) {
+            // Check if the clicked element is the .label inside the .dropdown
+            if ($(e.target).closest('.dropdown .label').length) {
                 var ul = $(e.target).siblings('ul:first');// Get the first sibling <ul>
                 ul.toggle();// Toggle the visibility of the <ul>
             }
