@@ -548,19 +548,26 @@ var REPORTS = (function($, window, document, undefined) {
 
 
 	function liveTable(members) {
+		// Show thinking icon
+		MAIN.thinking(true);
+
 		// Process the data and add rows dynamically
-        var table = $('#members-table').DataTable({
-        	lengthMenu: [
-		        [50, 100, -1],
-		        [50, 100, 'All']
-		    ],
-        	pageLength: 50,
-		    order: [[12, 'asc'], [13, 'asc']],// First sort by payment.status (asc), then by payment.nextBillingDate (asc)
-		    search: {
-		        return: true
-		    },
-		    scrollX: true
-		});
+        var table = $('#members-table')
+			.on('init.dt', () => {
+		        MAIN.thinking(false);
+			})
+        	.DataTable({
+	        	lengthMenu: [
+			        [50, 100, -1],
+			        [50, 100, 'All']
+			    ],
+	        	pageLength: 50,
+			    order: [[12, 'asc'], [13, 'asc']],// First sort by payment.status (asc), then by payment.nextBillingDate (asc)
+			    search: {
+			        return: true
+			    },
+			    scrollX: true
+			});
 
         members.forEach(function(member) {
         	var motives = member.customFields.motive ? member.customFields.motive.split('|').join(', ') : '';
