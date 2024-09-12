@@ -59,8 +59,12 @@ textarea {
 * Tables.
 *
 */
-.responsive {
+#members-table_wrapper {
+  display: block;
+  width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 #members-table {
   min-width: 1800px;
