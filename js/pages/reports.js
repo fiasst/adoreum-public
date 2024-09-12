@@ -565,8 +565,7 @@ var REPORTS = (function($, window, document, undefined) {
 			    order: [[12, 'asc'], [13, 'asc']],// First sort by payment.status (asc), then by payment.nextBillingDate (asc)
 			    search: {
 			        return: true
-			    },
-			    scrollX: true
+			    }
 			});
 
         members.forEach(function(member) {
