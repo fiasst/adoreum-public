@@ -628,9 +628,6 @@ var REPORTS = (function($, window, document, undefined) {
 	        // Append the checkbox to the container
 	        $('ul', $dropdown).append($item);
 	    });
-	    // Update label with (X) number
-	    $('.label', $dropdown).text(`${$dropdown.data('label')} (${$dropdown.find('input:checked').length})`);
-
         // Attach a change event to show/hide the corresponding column
         $('input', $dropdown).on('change', function() {
             tableMembers.column(index).visible( $(this).is(':checked') );// Show/hide column
