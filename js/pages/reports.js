@@ -620,6 +620,7 @@ var REPORTS = (function($, window, document, undefined) {
 
         // Create Columns dropdown filter
 		var $dropdown = $('<div id="column-list" class="dropdown"><div class="label">Columns</div><ul></ul></div>');
+	    // Populate dropdown
 	    $('#members-table thead th').each(function(index) {
 	        var columnTitle = $(this).text(),// Get the text of the <th>
 	        	$item = $('<li><label><input type="checkbox" checked>'+ columnTitle +'</label></li>');

@@ -322,7 +322,15 @@ var MAIN = (function($, window, document, undefined) {
         // Dropdown menus.
         //
         $(document).on('click.dropdowns', function(e) {
-            var $dropdown = $('.dropdown');
+            var $dropdown = $('.dropdown'),
+                updateDropdownLabel = (dd) => {
+                    $('.label', dd).text(`${dd.data('label')} (${dd.find('input:checked').length})`);
+                };
+
+            // Set the dropdown label value for later reference
+            if (!$dropdown.data('label')) {
+                $dropdown.data('label', $('.label', $dropdown).text());
+            }
 
             // Check if the clicked element is the .label inside the .dropdown
             if ($(e.target).closest('.dropdown .label').length) {
@@ -333,6 +341,17 @@ var MAIN = (function($, window, document, undefined) {
                 // If clicked outside of .dropdown, hide the <ul>
                 $dropdown.find('ul').hide();
             }
+
+            // Listen for checkbox changes inside dropdowns
+            $('.dropdown [type="checkbox"]').on('change', function() {
+                // Update the label when a checkbox is checked/unchecked
+                updateDropdownLabel( $(this).closest('.dropdown') );
+            });
+
+            // Initialize the label on page load for each dropdown
+            $('.dropdown').each(function() {
+                updateDropdownLabel($(this));
+            });
         });
 
 
