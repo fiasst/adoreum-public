@@ -35,9 +35,7 @@ var REPORTS = (function($, window, document, undefined) {
         USER.getCurrentMember(function(member) {
             if (HELP.checkKeyExists(member, 'id')) {
     			let endCursor = after ? '&after='+after : '';
-	    	
-			    // Show thinking icon
-		        MAIN.thinking(true);
+
 		        // Load data
 				HELP.sendAJAX({
 		            url: 'https://hook.eu2.make.com/72hi83eco73yt3iipj5ua0dctpb5sl35?hasNextPage=true&id='+member.id+endCursor,
@@ -253,6 +251,9 @@ var REPORTS = (function($, window, document, undefined) {
         // Retrieve the cached object from localStorage
         var cachedData = localStorage.getItem('cachedData'),
         	cacheExpiryHours = 1;
+        
+        // Show thinking icon
+		MAIN.thinking(true);
 
         if (cachedData) {
             // Parse the cached object
