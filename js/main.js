@@ -164,7 +164,13 @@ var MAIN = (function($, window, document, undefined) {
     //
     pub.thinking = (show, overlay = false) => {
         let classes = show ? (overlay ? 'thinking-overlay' : 'thinking') : 'thinking-overlay thinking';
-        $('body').toggleClass(classes, show);
+        // Don't use .toggleClass() as the function might be called in multiple places (/reports tabs).
+        if (!!show) {
+            $('body').addClass(classes);
+        }
+        else {
+            $('body').removeClass(classes);
+        }
     };
 
 

@@ -553,7 +553,7 @@ var REPORTS = (function($, window, document, undefined) {
 
 		// Process the data and add rows dynamically
         var tableMembers = $('#members-table')
-			.on('draw.dt', function() {
+			.on('draw', function() {
 		        MAIN.thinking(false);
 			})
         	.DataTable({
