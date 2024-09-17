@@ -548,14 +548,8 @@ var REPORTS = (function($, window, document, undefined) {
 
 
 	function liveTable(members) {
-		// Show thinking icon
-		MAIN.thinking(true);
-
 		// Process the data and add rows dynamically
         var tableMembers = $('#members-table')
-			.on('draw', function() {
-		        MAIN.thinking(false);
-			})
         	.DataTable({
 	        	lengthMenu: [
 			        [50, 100, -1],
