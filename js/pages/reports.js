@@ -615,7 +615,7 @@ var REPORTS = (function($, window, document, undefined) {
 
 
 		// Create download button
-        var $downloadBtn = $('<button id="download-csv" class="btn btn-primary">Download</button>');
+        var $downloadBtn = $('<button id="download-csv" class="button-secondary xsmall">Download</button>');
         $('#members-live-wrapper .head').append($downloadBtn);
         
         // Download functionality
@@ -626,9 +626,9 @@ var REPORTS = (function($, window, document, undefined) {
             
             tableMembers.rows({ search: 'applied' }).data().each(function(row) {
                 let rowData = row.map(cell => {
-                    let content = $(cell).text();
-                    return '"' + content.replace(/"/g, '""') + '"'; // Escape double quotes
-                });
+				    let content = cell.toString().replace(/<[^>]*>/g, '').trim(); // Strip HTML tags and trim whitespace
+				    return '"' + content.replace(/"/g, '""') + '"'; // Escape double quotes
+				});
                 csvContent += rowData.join(",") + "\n";
             });
             
