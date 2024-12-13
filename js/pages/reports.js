@@ -626,8 +626,13 @@ var REPORTS = (function($, window, document, undefined) {
             
             tableMembers.rows({ search: 'applied' }).data().each(function(row) {
                 let rowData = row.map(cell => {
-				    let content = cell.toString().replace(/<[^>]*>/g, '').trim(); // Strip HTML tags and trim whitespace
-				    return '"' + content.replace(/"/g, '""') + '"'; // Escape double quotes
+                	if (cell.includes('<a href=')) {
+				        // Retain the link in its HTML form
+				        return '"' + cell.replace(/"/g, '""') + '"';// Escape double quotes
+				    } else {
+				    	let content = cell.toString().replace(/<[^>]*>/g, '').trim();// Strip HTML tags and trim whitespace
+				    	return '"' + content.replace(/"/g, '""') + '"';// Escape double quotes
+				    }
 				});
                 csvContent += rowData.join(",") + "\n";
             });
