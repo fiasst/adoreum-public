@@ -633,22 +633,22 @@ var REPORTS = (function($, window, document, undefined) {
 
 		    // Process each row of the table
 		    tableMembers.rows({ search: 'applied' }).data().each(function (row) {
-		        let rowData = [];
-		        
-		        row.forEach((cell, index) => {
-		            let $cell = $(cell);
-		            let content = $cell.text().trim();
-		            
-		            // For the Member column, add an additional cell for the URL
-		            if (index === memberColumnIndex) {
-		                let link = $cell.find('a').attr('href') || '';
-		                rowData.push(`"${content.replace(/"/g, '""')}"`);// Escape double quotes
-		                rowData.push(`"${link}"`);
-		            } else {
-		            	let content = cell.toString().replace(/<[^>]*>/g, '').trim();// Strip HTML tags and trim whitespace
-		                rowData.push(`"${content.replace(/"/g, '""')}"`);// Escape double quotes
-		            }
-		        });
+		        let rowData = row.map((cell, index) => {
+				    let content = '';
+
+				    if (cell.includes('<a')) {
+				        // If cell contains an HTML link, parse it with jQuery
+				        let $cell = $(cell);
+				        let link = $cell.find('a').attr('href') || '';
+				        content = $cell.text().trim();
+				        rowData.push(`"${content.replace(/"/g, '""')}"`);
+				        rowData.push(`"${link}"`);
+				    } else {
+				        // Handle plain text cells
+				        content = cell.toString().replace(/<[^>]*>/g, '').trim();
+				        rowData.push(`"${content.replace(/"/g, '""')}"`);
+				    }
+				});
 
 		        csvContent += rowData.join(",") + "\n";
 		    });
