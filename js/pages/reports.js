@@ -623,8 +623,12 @@ var REPORTS = (function($, window, document, undefined) {
             let csvContent = "data:text/csv;charset=utf-8,";
 
 
+            // Get only visible columns
+    		let visibleColumns = tableMembers.columns(':visible').indexes().toArray();
             // Get headers and add an extra header for the URL if there's a link column
-		    let headers = tableMembers.columns().header().map((index, header) => $(header).text()).toArray();
+		    let headers = visibleColumns.map(index => {
+		        return $(tableMembers.column(index).header()).find('.dt-column-title').text().trim();
+		    });
 		    let memberColumnIndex = headers.indexOf("Member");
 		    if (memberColumnIndex !== -1) {
 		        headers.splice(memberColumnIndex + 1, 0, "Member URL");
@@ -635,7 +639,8 @@ var REPORTS = (function($, window, document, undefined) {
 		    tableMembers.rows({ search: 'applied' }).data().each(function (row) {
 		        let rowData = []; // Initialize rowData for each row
 
-		        row.forEach((cell, index) => {
+		        visibleColumns.forEach((index) => {
+		        	let cell = row[index];
 		            let content = cell.toString().trim();
 
 		            // If this is the Member column and contains an <a> tag, handle the link separately
@@ -655,10 +660,203 @@ var REPORTS = (function($, window, document, undefined) {
 		        csvContent += rowData.join(",") + "\n";
 		    });
             
+            // Uppercase the first character of a String.
+// usage: "hello, world!".capFirst();
+Object.defineProperty(String.prototype, 'capFirst', {
+    value: function() {
+        return this.charAt(0).toUpperCase() + this.slice(1);
+    },
+    enumerable: false
+});
+
+
+var REPORTS = (function($, window, document, undefined) {
+    let pub = {};
+
+    pub.charts = [];
+    pub.members = [];
+	pub.current = 0;
+	pub.total = 0;
+
+	// reports data.
+	pub.genders = {};
+	pub.countries = {};
+	pub.primarycity = {};
+	pub.motives = {};
+	pub.ageRanges = {};
+	pub.investors = {};
+	pub.joined = {};
+	pub.referrer = {};
+	pub.plans = {};
+    pub.subscriberStatus = [];
+
+
+    // Get all members for reports dashboard.
+    pub.getMemberData = (after) => {
+    	// Get current Member.
+        USER.getCurrentMember(function(member) {
+            if (HELP.checkKeyExists(member, 'id')) {
+    			let endCursor = after ? '&after='+after : '';
+
+		        // Load data
+				HELP.sendAJAX({
+	            url: 'https://hook.eu2.make.com/72hi83eco73yt3iipj5ua0dctpb5sl35?hasNextPage=true&id='+member.id+endCursor,
+	            method: 'GET',
+	            // data: data,
+	            callbackSuccess: function(data) {
+	                pub.processData(data);
+	            },
+	            callbackError: function(data) {
+	                MAIN.thinking(false);
+	                console.log('error');
+	            }
+	        }, false);
+			}
+		});
+	}
+
+
+	// Callback function to process all members data.
+	pub.processData = (response, useCache) => {
+		// set/update vars.
+		pub.members = pub.members.concat(response.data);
+		pub.current = pub.members.length;
+		pub.total = response.data[0].totalCount;
+
+		// update summary.
+		pub.updateSummary(pub.current, pub.total);
+
+		// Load next round of data.
+		if (response.data[0].hasNextPage === "true" && !useCache) {
+        	pub.getMemberData(response.data[0].endCursor);
+		}
+		else {
+			MAIN.thinking(false);
+			
+			// update cache
+			pub.setCache({data: pub.members});
+
+			// create Members live table view.
+			liveTable(pub.members);
+		}
+	}
+
+
+	// Function to check for cached reports data less than X hours old.
+    pub.checkCache = () => {
+        // Retrieve the cached object from localStorage
+        var cachedData = localStorage.getItem('cachedData'),
+        	cacheExpiryHours = 1;
+        
+        // Show thinking icon
+		MAIN.thinking(true);
+
+        if (cachedData) {
+            // Parse the cached object
+            cachedData = JSON.parse(cachedData);
+            // Get the current time and cached time
+            var currentTime = new Date().getTime(),
+            	cachedTime = cachedData.timestamp,
+
+            	// Calculate the time difference in hours
+            	timeDifference = (currentTime - cachedTime) / (1000*60*60);
+
+            if (timeDifference < cacheExpiryHours) {
+                console.log('Use cache');
+                // Cached data is less than X hours old
+                pub.processData(cachedData, true);
+            }
+            else {
+            	console.log('Cache expired');
+                // Cached data is older than X hours, delete it
+                localStorage.removeItem('cachedData');
+                // Get fresh data
+        		pub.getMemberData();
+            }
+        }
+        else {
+        	console.log('No cache found');
+            // No cached data found
+        	pub.getMemberData();
+        }
+    }
+
+
+    pub.setCache = (data) => {
+	    var cachedData = {
+	        data: data.data,
+	        timestamp: new Date().getTime()
+	    };
+	    localStorage.setItem('cachedData', JSON.stringify(cachedData));
+	}
+
+
+	pub.updateSummary = (current, total) => {
+		let $summary = $('#summary');
+		$('.current', $summary).text(current);
+		$('.total', $summary).text(total);
+	}
+
+
+	function liveTable(members) {
+		// Process the data and add rows dynamically
+        var tableMembers = $('#members-table')
+        	.DataTable({
+	        	lengthMenu: [
+		        [50, 100, -1],
+		        [50, 100, 'All']
+		    ],
+	        	pageLength: 50,
+		    order: [[12, 'asc'], [13, 'asc']],
+		    search: {
+		        return: true
+		    }
+		});
+
+        members.forEach(function(member) {
+			var motives = member.customFields.motive ? member.customFields.motive.split('|').join(', ') : '';
+
+            let memberLink = `https://app.memberstack.com/apps/app_cllao1xky00gp0t4gd37g6u4b/members/${member.id}/profile`;
+		    let data = [
+		        `<a href="${memberLink}" target="_blank">${member.customFields.name}</a>`,
+                memberLink,
+		        member.customFields.company || '',
+		        member.customFields.gender || '',
+		        member.customFields.country || '',
+		        member.customFields.primarycity || '',
+		        member.customFields['date-of-birth'] || '',
+		        motives,
+		        member.customFields.investor || '',
+		        member.customFields.canaccessapp || '',
+		        HELP.formatTimestamp(member.createdAt)
+		    ];
+
+		    tableMembers.row.add(data).draw();
+		});
+
+        // Create download button
+        var $downloadBtn = $('<button id="download-csv" class="btn btn-primary">Download CSV</button>');
+        $('#members-live-wrapper .head').append($downloadBtn);
+        
+        // Download functionality
+        $downloadBtn.on('click', function() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            let headers = tableMembers.columns().header().map((index, header) => $(header).text()).toArray().join(",");
+            csvContent += headers + "\n";
+            
+            tableMembers.rows({ search: 'applied' }).data().each(function(row) {
+                let rowData = row.map(cell => {
+                    let content = $(cell).text();
+                    return '"' + content.replace(/"/g, '""') + '"'; // Escape double quotes
+                });
+                csvContent += rowData.join(",") + "\n";
+            });
+            
+            let date = new Date().toISOString().split('T')[0];
             let encodedUri = encodeURI(csvContent);
             let link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "members.csv");
+            link.setAttribute("download", `members-${date}.csv`);
             document.body.appendChild(link); // Required for FF
             link.click();
             document.body.removeChild(link);
