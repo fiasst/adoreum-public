@@ -621,7 +621,8 @@ var REPORTS = (function($, window, document, undefined) {
         // Download functionality
         $downloadBtn.on('click', function() {
             let csvContent = "data:text/csv;charset=utf-8,";
-            
+
+
             // Get headers and add an extra header for the URL if there's a link column
 		    let headers = tableMembers.columns().header().map((index, header) => $(header).text()).toArray();
 		    let memberColumnIndex = headers.indexOf("Member");
@@ -641,10 +642,11 @@ var REPORTS = (function($, window, document, undefined) {
 		            // For the Member column, add an additional cell for the URL
 		            if (index === memberColumnIndex) {
 		                let link = $cell.find('a').attr('href') || '';
-		                rowData.push(`"${content.replace(/"/g, '""')}"`);
+		                rowData.push(`"${content.replace(/"/g, '""')}"`);// Escape double quotes
 		                rowData.push(`"${link}"`);
 		            } else {
-		                rowData.push(`"${content.replace(/"/g, '""')}"`);
+		            	let content = cell.toString().replace(/<[^>]*>/g, '').trim();// Strip HTML tags and trim whitespace
+		                rowData.push(`"${content.replace(/"/g, '""')}"`);// Escape double quotes
 		            }
 		        });
 
