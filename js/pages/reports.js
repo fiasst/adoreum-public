@@ -841,16 +841,32 @@ var REPORTS = (function($, window, document, undefined) {
         // Download functionality
         $downloadBtn.on('click', function() {
             let csvContent = "data:text/csv;charset=utf-8,";
-            let headers = tableMembers.columns().header().map((index, header) => $(header).text()).toArray().join(",");
+            let visibleColumns = tableMembers.columns(':visible').indexes().toArray();
             csvContent += headers + "\n";
             
-            tableMembers.rows({ search: 'applied' }).data().each(function(row) {
-                let rowData = row.map(cell => {
-                    let content = $(cell).text();
-                    return '"' + content.replace(/"/g, '""') + '"'; // Escape double quotes
-                });
-                csvContent += rowData.join(",") + "\n";
-            });
+            tableMembers.rows({ search: 'applied' }).data().each(function (row) {
+			    let rowData = []; // Initialize rowData for each row
+
+			    visibleColumns.forEach((index) => {
+			        let cell = row[index];
+			        let content = cell.toString().trim();
+
+			        // If this is the Member column and contains an <a> tag, handle the link separately
+			        if (index === memberColumnIndex && content.includes('<a')) {
+			            let $cell = $('<div>').html(content); // Wrap content in a temporary element to parse HTML
+			            let link = $cell.find('a').attr('href') || '';
+			            let text = $cell.find('a').text().trim();
+			            rowData.push(`"${text.replace(/"/g, '""')}"`);
+			            rowData.push(`"${link}"`);
+			        } else {
+			            // Handle plain text cells
+			            content = cell.toString().replace(/<[^>]*>/g, '').trim(); // Strip HTML tags
+			            rowData.push(`"${content.replace(/"/g, '""')}"`);
+			        }
+			    });
+
+			    csvContent += rowData.join(",") + "\n";
+			});
             
             let date = new Date().toISOString().split('T')[0];
             let encodedUri = encodeURI(csvContent);
