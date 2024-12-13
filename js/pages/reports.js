@@ -633,23 +633,25 @@ var REPORTS = (function($, window, document, undefined) {
 
 		    // Process each row of the table
 		    tableMembers.rows({ search: 'applied' }).data().each(function (row) {
-		        let rowData = []; // Initialize rowData here
-        
+		        let rowData = []; // Initialize rowData for each row
+
 		        row.forEach((cell, index) => {
-		            let content;
-		            // If cell contains an <a> tag, parse it with jQuery and output the URL too
-		            if (cell.includes('<a')) {
-		                let $cell = $(cell);
+		            let content = cell.toString().trim();
+
+		            // If this is the Member column and contains an <a> tag, handle the link separately
+		            if (index === memberColumnIndex && content.includes('<a')) {
+		                let $cell = $('<div>').html(content); // Wrap content in a temporary element to parse HTML
 		                let link = $cell.find('a').attr('href') || '';
-		                content = $cell.text().trim();
-		                rowData.push(`"${content.replace(/"/g, '""')}"`);
+		                let text = $cell.find('a').text().trim();
+		                rowData.push(`"${text.replace(/"/g, '""')}"`);
 		                rowData.push(`"${link}"`);
 		            } else {
-		                content = $(cell).text().trim();
-		                rowData.push(`"${content.replace(/"/g, '""')}"`);
+		                // Handle plain text cells
+				        content = cell.toString().replace(/<[^>]*>/g, '').trim();
+				        rowData.push(`"${content.replace(/"/g, '""')}"`);
 		            }
 		        });
-		        
+
 		        csvContent += rowData.join(",") + "\n";
 		    });
             
