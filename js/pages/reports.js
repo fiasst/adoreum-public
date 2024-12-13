@@ -621,21 +621,35 @@ var REPORTS = (function($, window, document, undefined) {
         // Download functionality
         $downloadBtn.on('click', function() {
             let csvContent = "data:text/csv;charset=utf-8,";
-            let headers = tableMembers.columns().header().map((index, header) => $(header).text()).toArray().join(",");
-            csvContent += headers + "\n";
             
-            tableMembers.rows({ search: 'applied' }).data().each(function(row) {
-                let rowData = row.map(cell => {
-                	if (cell.includes('<a href=')) {
-				        // Retain the link in its HTML form
-				        return '"' + cell.replace(/"/g, '""') + '"';// Escape double quotes
-				    } else {
-				    	let content = cell.toString().replace(/<[^>]*>/g, '').trim();// Strip HTML tags and trim whitespace
-				    	return '"' + content.replace(/"/g, '""') + '"';// Escape double quotes
-				    }
-				});
-                csvContent += rowData.join(",") + "\n";
-            });
+            // Get headers and add an extra header for the URL if there's a link column
+		    let headers = tableMembers.columns().header().map((index, header) => $(header).text()).toArray();
+		    let memberColumnIndex = headers.indexOf("Member");
+		    if (memberColumnIndex !== -1) {
+		        headers.splice(memberColumnIndex + 1, 0, "Member URL");
+		    }
+		    csvContent += headers.join(",") + "\n";
+
+		    // Process each row of the table
+		    tableMembers.rows({ search: 'applied' }).data().each(function (row) {
+		        let rowData = [];
+		        
+		        row.forEach((cell, index) => {
+		            let $cell = $(cell);
+		            let content = $cell.text().trim();
+		            
+		            // For the Member column, add an additional cell for the URL
+		            if (index === memberColumnIndex) {
+		                let link = $cell.find('a').attr('href') || '';
+		                rowData.push(`"${content.replace(/"/g, '""')}"`);
+		                rowData.push(`"${link}"`);
+		            } else {
+		                rowData.push(`"${content.replace(/"/g, '""')}"`);
+		            }
+		        });
+
+		        csvContent += rowData.join(",") + "\n";
+		    });
             
             let encodedUri = encodeURI(csvContent);
             let link = document.createElement("a");
