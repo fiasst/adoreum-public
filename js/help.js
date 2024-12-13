@@ -150,37 +150,37 @@ HELP = (function($, window, document, undefined) {
 
 
     //
-        // Get/set querystring.
-        //
-        // "url": Provide the current URL or link href to update an existing querystring.
-        pub.getSetQuerystring = (params = '', type = 'relative', url = window.location.href) => {
-            // "url" param must be absolute or it will error.
-            url = url.indexOf('://') < 0 ? window.location.origin + url : url;
-            let urlObj = new URL(url);
+    // Get/set querystring.
+    //
+    // "url": Provide the current URL or link href to update an existing querystring.
+    pub.getSetQuerystring = (params = '', type = 'relative', url = window.location.href) => {
+        // "url" param must be absolute or it will error.
+        url = url.indexOf('://') < 0 ? window.location.origin + url : url;
+        let urlObj = new URL(url);
 
-            // Set params.
-            if (typeof params === "object") {
-                // Iterate through new parameters and append them to the existing ones.
-                for (let [key, value] of Object.entries(params)) {
-                    let sanitizedKey = pub.sanitizeHTML(key),
-                        sanitizedValue = pub.sanitizeHTML(value);
-                    
-                    // Append the new key-value pair to the existing query parameters.
-                    urlObj.searchParams.append(sanitizedKey, sanitizedValue);
-                }
-                // Return an absolute URL, relative URI + querystring or just qstring.
-                switch (type) {
-                    case 'absolute':
-                        return urlObj.origin + urlObj.pathname + urlObj.search;
-                    case 'relative':
-                        return urlObj.pathname + urlObj.search;
-                    case 'query':
-                        return urlObj.search;
-                }
+        // Set params.
+        if (typeof params === "object") {
+            // Iterate through new parameters and append them to the existing ones.
+            for (let [key, value] of Object.entries(params)) {
+                let sanitizedKey = pub.sanitizeHTML(key),
+                    sanitizedValue = pub.sanitizeHTML(value);
+                
+                // Append the new key-value pair to the existing query parameters.
+                urlObj.searchParams.append(sanitizedKey, sanitizedValue);
             }
-            // Get value.
-            return pub.sanitizeHTML(urlObj.searchParams.get(params.toString()));
-        };
+            // Return an absolute URL, relative URI + querystring or just qstring.
+            switch (type) {
+                case 'absolute':
+                    return urlObj.origin + urlObj.pathname + urlObj.search;
+                case 'relative':
+                    return urlObj.pathname + urlObj.search;
+                case 'query':
+                    return urlObj.search;
+            }
+        }
+        // Get value.
+        return pub.sanitizeHTML(urlObj.searchParams.get(params.toString()));
+    };
 
 
     //

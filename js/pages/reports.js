@@ -613,6 +613,35 @@ var REPORTS = (function($, window, document, undefined) {
 		    }
 		});
 
+
+		// Create download button
+        var $downloadBtn = $('<button id="download-csv" class="btn btn-primary">Download</button>');
+        $('#members-live-wrapper .head').append($downloadBtn);
+        
+        // Download functionality
+        $downloadBtn.on('click', function() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            let headers = tableMembers.columns().header().map((index, header) => $(header).text()).toArray().join(",");
+            csvContent += headers + "\n";
+            
+            tableMembers.rows({ search: 'applied' }).data().each(function(row) {
+                let rowData = row.map(cell => {
+                    let content = $(cell).text();
+                    return '"' + content.replace(/"/g, '""') + '"'; // Escape double quotes
+                });
+                csvContent += rowData.join(",") + "\n";
+            });
+            
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "members.csv");
+            document.body.appendChild(link); // Required for FF
+            link.click();
+            document.body.removeChild(link);
+        });
+
+
         // Create Columns dropdown filter
 		var $dropdown = $('<div id="column-list" class="dropdown"><div class="label">Columns</div><ul></ul></div>');
 	    // Populate dropdown
