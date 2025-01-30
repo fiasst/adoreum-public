@@ -306,4 +306,39 @@ jQuery.expr[':'].selectedInput = (el, i, m) => {
 };
 
 
+FORMS.registerValidation = function() {
+    document.addEventListener("DOMContentLoaded", function() {
+        // Check if the browser supports HTML5 validation
+        var testInput = document.createElement("input");
+        testInput.setAttribute("required", "required");
+
+        //if (!("checkValidity" in testInput) || !testInput.checkValidity()) {
+        if (("checkValidity" in testInput) || testInput.checkValidity()) {
+            //HTML5 validation not supported. Loading jQuery Validation plugin...
+            var scriptValidation = document.createElement("script");
+            scriptValidation.src = "https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js";
+            scriptValidation.onload = function() {
+                console.log("jQuery Validation plugin loaded.");
+                applyValidation();
+            };
+            document.head.appendChild(scriptValidation);
+        }
+
+        function applyValidation() {
+            var $form = $(".form-register");
+            $form.validate({
+                errorClass: "error",
+                errorElement: "span",
+                highlight: function(element) {
+                    $(element).addClass("input-error");
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass("input-error");
+                }
+            });
+            return $form.valid();
+        }
+    });
+    return true;
+};
 
