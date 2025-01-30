@@ -312,8 +312,7 @@ FORMS.registerValidation = function() {
         var testInput = document.createElement("input");
         testInput.setAttribute("required", "required");
 
-        //if (!("checkValidity" in testInput) || !testInput.checkValidity()) {
-        if (("checkValidity" in testInput) || testInput.checkValidity()) {
+        if (!("checkValidity" in testInput) || !testInput.checkValidity()) {
             //HTML5 validation not supported. Loading jQuery Validation plugin...
             var scriptValidation = document.createElement("script");
             scriptValidation.src = "https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js";
