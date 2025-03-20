@@ -97,36 +97,12 @@ var REPORTS = (function($, window, document, undefined) {
 					updateValue(pub.genders, member.customFields.gender);
 				}
 
-				// address.
-				if (member.customFields.address) {
-					updateValue(pub.address, member.customFields.address);
-				}
-				else {
-					updateValue(pub.address, 'Unknown');
-				}
-
 				// country.
 				if (member.customFields.country) {
 					updateValue(pub.countries, member.customFields.country);
 				}
 				else {
 					updateValue(pub.countries, 'Unknown');
-				}
-
-				// postcode.
-				if (member.customFields.postcode) {
-					updateValue(pub.postcode, member.customFields.postcode);
-				}
-				else {
-					updateValue(pub.postcode, 'Unknown');
-				}
-
-				// phone.
-				if (member.customFields.phone) {
-					updateValue(pub.phone, member.customFields.phone);
-				}
-				else {
-					updateValue(pub.phone, 'Unknown');
 				}
 
 				// primary city.
@@ -598,6 +574,9 @@ var REPORTS = (function($, window, document, undefined) {
 		        member.customFields.company || '',
 		        member.customFields.gender || '',
 		        member.customFields.country || '',
+		        member.customFields.address || '',
+		        member.customFields.postcode || '',
+		        member.customFields.phone || '',
 		        member.customFields.primarycity || '',
 		        member.customFields['date-of-birth'] || '',
 		        motives,
