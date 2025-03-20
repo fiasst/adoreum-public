@@ -18,10 +18,7 @@ var REPORTS = (function($, window, document, undefined) {
 
 	// reports data.
 	pub.genders = {};
-	pub.address = {};
-	pub.postcode = {};
 	pub.countries = {};
-	pub.phone = {};
 	pub.primarycity = {};
 	pub.motives = {};
 	pub.ageRanges = {};
@@ -576,7 +573,7 @@ var REPORTS = (function($, window, document, undefined) {
 		        member.customFields.country || '',
 		        member.customFields.address || '',
 		        member.customFields.postcode || '',
-		        member.customFields.phone || '',
+		        member.customFields.mobile || '',
 		        member.customFields.primarycity || '',
 		        member.customFields['date-of-birth'] || '',
 		        motives,
