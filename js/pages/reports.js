@@ -18,7 +18,10 @@ var REPORTS = (function($, window, document, undefined) {
 
 	// reports data.
 	pub.genders = {};
+	pub.address = {};
+	pub.postcode = {};
 	pub.countries = {};
+	pub.phone = {};
 	pub.primarycity = {};
 	pub.motives = {};
 	pub.ageRanges = {};
@@ -94,12 +97,36 @@ var REPORTS = (function($, window, document, undefined) {
 					updateValue(pub.genders, member.customFields.gender);
 				}
 
+				// address.
+				if (member.customFields.address) {
+					updateValue(pub.address, member.customFields.address);
+				}
+				else {
+					updateValue(pub.address, 'Unknown');
+				}
+
 				// country.
 				if (member.customFields.country) {
 					updateValue(pub.countries, member.customFields.country);
 				}
 				else {
 					updateValue(pub.countries, 'Unknown');
+				}
+
+				// postcode.
+				if (member.customFields.postcode) {
+					updateValue(pub.postcode, member.customFields.postcode);
+				}
+				else {
+					updateValue(pub.postcode, 'Unknown');
+				}
+
+				// phone.
+				if (member.customFields.phone) {
+					updateValue(pub.phone, member.customFields.phone);
+				}
+				else {
+					updateValue(pub.phone, 'Unknown');
 				}
 
 				// primary city.
