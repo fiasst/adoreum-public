@@ -571,6 +571,7 @@ var REPORTS = (function($, window, document, undefined) {
 		        member.customFields.company || '',
 		        member.customFields.gender || '',
 		        member.customFields.address || '',
+		        member.customFields.county || '',
 		        member.customFields.postcode || '',
 		        member.customFields.country || '',
 		        member.customFields.mobile || '',
