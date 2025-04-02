@@ -652,52 +652,45 @@ var REPORTS = (function($, window, document, undefined) {
         $downloadBtn.on('click', function () {
 			let csvContent = "data:text/csv;charset=utf-8,";
 
-			// Get all data as flat array
-			const allData = tableMembers.rows({ search: 'applied' }).data().toArray();
-			console.log( allData );
-
-			// Get visible columns
+			// Get visible column indexes
 			const visibleIndexes = tableMembers.columns(':visible').indexes().toArray();
 
 			// Extract headers
 			let headers = visibleIndexes.map(index => {
 				return $(tableMembers.column(index).header()).text().trim();
 			});
-
-			// Add "Member URL" column if needed
 			const memberColIndex = headers.indexOf("Member");
 			if (memberColIndex !== -1) {
 				headers.splice(memberColIndex + 1, 0, "Member URL");
 			}
 			csvContent += headers.join(",") + "\n";
 
-			// Loop through all data rows
-			allData.forEach((row) => {
+			// Loop over every row in the DOM (bypasses DataTables paging entirely!)
+			$('#members-table tbody tr').each(function () {
 				let csvRow = [];
+				$(this).find('td').each(function (i) {
+					if (!visibleIndexes.includes(i)) return; // Skip hidden columns
 
-				visibleIndexes.forEach((index) => {
-					let cell = row[index];
-					let content = cell ? cell.toString().trim() : "";
-
-					if (index === memberColIndex && content.includes('<a')) {
-						const $cell = $('<div>').html(content);
-						const text = $cell.find('a').text().trim();
-						const link = $cell.find('a').attr('href') || '';
+					let content = $(this).html().trim();
+					if (i === memberColIndex && content.includes('<a')) {
+						let $link = $('<div>').html(content).find('a');
+						let text = $link.text().trim();
+						let href = $link.attr('href') || '';
 						csvRow.push(`"${text.replace(/"/g, '""')}"`);
-						csvRow.push(`"${link}"`);
+						csvRow.push(`"${href}"`);
 					} else {
-						content = content.replace(/<[^>]*>/g, '').trim();
-						csvRow.push(`"${content.replace(/"/g, '""')}"`);
+						let clean = $('<div>').html(content).text().trim();
+						csvRow.push(`"${clean.replace(/"/g, '""')}"`);
 					}
 				});
-
-				csvContent += csvRow.join(",") + "\n";
+				if (csvRow.length > 0) {
+					csvContent += csvRow.join(",") + "\n";
+				}
 			});
 
-			// Trigger download
-			const date = new Date().toISOString().split('T')[0];
-			const encodedUri = encodeURI(csvContent);
-			const link = document.createElement("a");
+			let date = new Date().toISOString().split('T')[0];
+			let encodedUri = encodeURI(csvContent);
+			let link = document.createElement("a");
 			link.setAttribute("href", encodedUri);
 			link.setAttribute("download", `members-${date}.csv`);
 			document.body.appendChild(link);
