@@ -649,38 +649,40 @@ var REPORTS = (function($, window, document, undefined) {
         $('#members-live-wrapper .head').append($downloadBtn);
         
         // Download functionality
-        $downloadBtn.on('click', function() {
+        $downloadBtn.on('click', function () {
 			let csvContent = "data:text/csv;charset=utf-8,";
 
-			// Get visible column indexes
-			let visibleIndexes = tableMembers.columns(':visible').indexes().toArray();
+			// Get all data as flat array
+			const allData = tableMembers.rows({ search: 'applied' }).data().toArray();
+			console.log( allData );
 
-			// Get headers
+			// Get visible columns
+			const visibleIndexes = tableMembers.columns(':visible').indexes().toArray();
+
+			// Extract headers
 			let headers = visibleIndexes.map(index => {
 				return $(tableMembers.column(index).header()).text().trim();
 			});
 
 			// Add "Member URL" column if needed
-			let memberColIndex = headers.indexOf("Member");
+			const memberColIndex = headers.indexOf("Member");
 			if (memberColIndex !== -1) {
 				headers.splice(memberColIndex + 1, 0, "Member URL");
 			}
 			csvContent += headers.join(",") + "\n";
 
-			// Loop over ALL filtered rows
-			tableMembers.rows({ search: 'applied' }).every(function () {
-				let fullRow = this.data();
+			// Loop through all data rows
+			allData.forEach((row) => {
 				let csvRow = [];
 
-				visibleIndexes.forEach((i) => {
-					let cell = fullRow[i];
+				visibleIndexes.forEach((index) => {
+					let cell = row[index];
 					let content = cell ? cell.toString().trim() : "";
 
-					// Special handling for member link column
-					if (i === memberColIndex && content.includes('<a')) {
-						let $cell = $('<div>').html(content);
-						let text = $cell.find('a').text().trim();
-						let link = $cell.find('a').attr('href') || '';
+					if (index === memberColIndex && content.includes('<a')) {
+						const $cell = $('<div>').html(content);
+						const text = $cell.find('a').text().trim();
+						const link = $cell.find('a').attr('href') || '';
 						csvRow.push(`"${text.replace(/"/g, '""')}"`);
 						csvRow.push(`"${link}"`);
 					} else {
@@ -692,9 +694,10 @@ var REPORTS = (function($, window, document, undefined) {
 				csvContent += csvRow.join(",") + "\n";
 			});
 
-			let date = new Date().toISOString().split('T')[0];
-			let encodedUri = encodeURI(csvContent);
-			let link = document.createElement("a");
+			// Trigger download
+			const date = new Date().toISOString().split('T')[0];
+			const encodedUri = encodeURI(csvContent);
+			const link = document.createElement("a");
 			link.setAttribute("href", encodedUri);
 			link.setAttribute("download", `members-${date}.csv`);
 			document.body.appendChild(link);
