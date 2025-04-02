@@ -681,6 +681,7 @@ var REPORTS = (function($, window, document, undefined) {
 				let csvRow = [];
 
 				visibleIndexes.forEach((columnIndex, i) => {
+					console.log('columnIndex', columnIndex)
 					let cell = row[columnIndex];
 					let content = cell ? cell.toString().trim() : "";
 
@@ -705,6 +706,8 @@ var REPORTS = (function($, window, document, undefined) {
 					console.log('A row was empty.')
 				}
 			});
+			console.log('csvRow', csvRow);
+			console.log('csvRow', csvRow.length);
 
 			// Trigger download
 			const date = new Date().toISOString().split('T')[0];
@@ -716,6 +719,7 @@ var REPORTS = (function($, window, document, undefined) {
 			link.click();
 			document.body.removeChild(link);
 		});
+		console.log('csvContent', csvContent);
 	}
 
 
