@@ -588,7 +588,7 @@ var REPORTS = (function($, window, document, undefined) {
 		        tableMembers.row.add(data.concat(['', '', '', '', ''])).draw();
 		    }
 		    else {
-		        // Loop through planConnections and add rows for each plan
+		        /*// Loop through planConnections and add rows for each plan
 		        member.planConnections.forEach(function(plan) {
 		        	if (plan.type == 'SUBSCRIPTION') {
 		        		var amount = '';
@@ -613,7 +613,40 @@ var REPORTS = (function($, window, document, undefined) {
 			            // Add a row combining base data and plan data
 			            tableMembers.row.add(data.concat(planData)).draw();
 			        }
-		        });
+		        });*/
+		        let plansPaid = member.planConnections.filter(p => p.type === 'SUBSCRIPTION');
+
+				let activePlans = plansPaid.filter(p => p.active);
+				let displayPlans = [];
+
+				if (activePlans.length > 0) {
+				    displayPlans = activePlans;
+				} else {
+				    displayPlans = plansPaid.filter(p => p.payment && Object.keys(p.payment).length > 0);
+				}
+
+				// Combine all selected plans into a single row
+				let planNames = displayPlans.map(p => p.planName || 'N/A').join(', ');
+				let planStatuses = displayPlans.map(p => p.status || 'N/A').join(', ');
+				let paymentAmounts = displayPlans.map(p => {
+				    if (p.payment && p.payment.amount) {
+				        let sum = HELP.formatThousands(p.payment.amount);
+				        return p.payment.currency === 'gbp' ? '£' + sum : sum + ' ' + p.payment.currency;
+				    }
+				    return '';
+				}).join(', ');
+				let paymentStatuses = displayPlans.map(p => (p.payment ? p.payment.status || 'N/A' : 'N/A')).join(', ');
+				let billingDates = displayPlans.map(p => {
+				    if (p.payment && p.payment.nextBillingDate) {
+				        let ts = HELP.ISOToTimestamp(p.payment.nextBillingDate);
+				        return HELP.formatTimestamp(ts, false, true);
+				    }
+				    return '';
+				}).join(', ');
+
+				// Add single row for member
+				tableMembers.row.add(data.concat([planNames, planStatuses, paymentAmounts, paymentStatuses, billingDates])).draw();
+
 		    }
 		});
 
@@ -659,7 +692,9 @@ var REPORTS = (function($, window, document, undefined) {
 		    csvContent += headers.join(",") + "\n";
 
 		    // Process each row of the table
-		    tableMembers.rows({ search: 'applied' }).data().each(function (row) {
+		    // tableMembers.rows({ search: 'applied' }).data().each(function (row) {
+		    tableMembers.rows({ search: 'applied' }).every(function () {
+        		let row = this.data();
 		        let rowData = []; // Initialize rowData for each row
 
 		        visibleColumns.forEach((index) => {
