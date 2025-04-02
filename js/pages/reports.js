@@ -681,7 +681,6 @@ var REPORTS = (function($, window, document, undefined) {
 				let csvRow = [];
 
 				visibleIndexes.forEach((columnIndex, i) => {
-					console.log('i', i)
 					let cell = row[columnIndex];
 					let content = cell ? cell.toString().trim() : "";
 
@@ -706,8 +705,7 @@ var REPORTS = (function($, window, document, undefined) {
 					console.log('A row was empty.')
 				}
 			});
-			console.log('csvRow', csvRow);
-			console.log('csvRow', csvRow.length);
+			console.log('csvRow', csvContent);
 
 			// Trigger download
 			const date = new Date().toISOString().split('T')[0];
