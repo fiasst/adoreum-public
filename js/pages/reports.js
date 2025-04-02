@@ -548,6 +548,8 @@ var REPORTS = (function($, window, document, undefined) {
 	}
 
 
+	let tableMembers;
+
 	function liveTable(members) {
 		// Process the data and add rows dynamically
 		let allRows = [];
@@ -603,7 +605,7 @@ var REPORTS = (function($, window, document, undefined) {
 		});
 
 
-		let tableMembers = $('#members-table').DataTable({
+		tableMembers = $('#members-table').DataTable({
 			data: allRows,
 			columns: [
 				{ title: "Member" }, { title: "Company" }, { title: "Gender" }, 
@@ -650,6 +652,12 @@ var REPORTS = (function($, window, document, undefined) {
         
         // Download functionality
         $downloadBtn.on('click', function () {
+        	if (!tableMembers) {
+				alert("Table is not ready yet.");
+				return;
+			}
+			console.log("DataTable row count:", tableMembers.rows({ search: 'applied' }).count());
+
 			let csvContent = "data:text/csv;charset=utf-8,";
 
 			// Pull all filtered data
