@@ -650,58 +650,57 @@ var REPORTS = (function($, window, document, undefined) {
         
         // Download functionality
         $downloadBtn.on('click', function() {
-            let csvContent = "data:text/csv;charset=utf-8,";
+			let csvContent = "data:text/csv;charset=utf-8,";
 
+			// Get visible column indexes
+			let visibleIndexes = tableMembers.columns(':visible').indexes().toArray();
 
-            // Get only visible columns
-    		let visibleColumns = tableMembers.columns(':visible').indexes().toArray();
-            // Get headers and add an extra header for the URL if there's a link column
-		    let headers = visibleColumns.map(index => {
-		        return $(tableMembers.column(index).header()).find('.dt-column-title').text().trim();
-		    });
-		    let memberColumnIndex = headers.indexOf("Member");
-		    if (memberColumnIndex !== -1) {
-		        headers.splice(memberColumnIndex + 1, 0, "Member URL");
-		    }
-		    csvContent += headers.join(",") + "\n";
+			// Get headers
+			let headers = visibleIndexes.map(index => {
+				return $(tableMembers.column(index).header()).text().trim();
+			});
 
-		    // Process each row of the table
-		    console.log("Downloading rows:", tableMembers.rows({ search: 'applied' }).count());
-		    // tableMembers.rows({ search: 'applied' }).data().each(function (row) {
-		    tableMembers.rows({ search: 'applied' }).every(function () {
-        		let row = this.data();
-		        let rowData = []; // Initialize rowData for each row
+			// Add "Member URL" column if needed
+			let memberColIndex = headers.indexOf("Member");
+			if (memberColIndex !== -1) {
+				headers.splice(memberColIndex + 1, 0, "Member URL");
+			}
+			csvContent += headers.join(",") + "\n";
 
-		        visibleColumns.forEach((index) => {
-		        	let cell = row[index];
-		            let content = cell.toString().trim();
+			// Loop over ALL filtered rows
+			tableMembers.rows({ search: 'applied' }).every(function () {
+				let fullRow = this.data();
+				let csvRow = [];
 
-		            // If this is the Member column and contains an <a> tag, handle the link separately
-		            if (index === memberColumnIndex && content.includes('<a')) {
-		                let $cell = $('<div>').html(content); // Wrap content in a temporary element to parse HTML
-		                let link = $cell.find('a').attr('href') || '';
-		                let text = $cell.find('a').text().trim();
-		                rowData.push(`"${text.replace(/"/g, '""')}"`);
-		                rowData.push(`"${link}"`);
-		            } else {
-		                // Handle plain text cells
-				        content = cell.toString().replace(/<[^>]*>/g, '').trim();
-				        rowData.push(`"${content.replace(/"/g, '""')}"`);
-		            }
-		        });
+				visibleIndexes.forEach((i) => {
+					let cell = fullRow[i];
+					let content = cell ? cell.toString().trim() : "";
 
-		        csvContent += rowData.join(",") + "\n";
-		    });
-            
-            let date = new Date().toISOString().split('T')[0];
-            let encodedUri = encodeURI(csvContent);
-            let link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `members-${date}.csv`);
-            document.body.appendChild(link); // Required for FF
-            link.click();
-            document.body.removeChild(link);
-        });
+					// Special handling for member link column
+					if (i === memberColIndex && content.includes('<a')) {
+						let $cell = $('<div>').html(content);
+						let text = $cell.find('a').text().trim();
+						let link = $cell.find('a').attr('href') || '';
+						csvRow.push(`"${text.replace(/"/g, '""')}"`);
+						csvRow.push(`"${link}"`);
+					} else {
+						content = content.replace(/<[^>]*>/g, '').trim();
+						csvRow.push(`"${content.replace(/"/g, '""')}"`);
+					}
+				});
+
+				csvContent += csvRow.join(",") + "\n";
+			});
+
+			let date = new Date().toISOString().split('T')[0];
+			let encodedUri = encodeURI(csvContent);
+			let link = document.createElement("a");
+			link.setAttribute("href", encodedUri);
+			link.setAttribute("download", `members-${date}.csv`);
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+		});
 	}
 
 
