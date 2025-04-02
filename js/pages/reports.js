@@ -653,7 +653,7 @@ var REPORTS = (function($, window, document, undefined) {
         
         // Download functionality
         $downloadBtn.on('click', function () {
-			let csvContent = "data:text/csv;charset=utf-8,";
+			let csvContent = "";
 
 			// Pull all filtered data
 			const allData = tableMembers.rows({ search: 'applied' }).data().toArray();
