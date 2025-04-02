@@ -69,7 +69,7 @@ var REPORTS = (function($, window, document, undefined) {
         	pub.getMemberData(response.data[0].endCursor);
         	return
 		}
-		
+
 		MAIN.thinking(false);
 		
 		// update cache
@@ -563,93 +563,80 @@ var REPORTS = (function($, window, document, undefined) {
 			    }
 			});
 
+
+		let allRows = [];
         members.forEach(function(member) {
-        	var motives = member.customFields.motive ? member.customFields.motive.split('|').join(', ') : '';
+			let motives = member.customFields.motive ? member.customFields.motive.split('|').join(', ') : '';
 
-		    let data = [
-		        `<a href="https://app.memberstack.com/apps/app_cllao1xky00gp0t4gd37g6u4b/members/${member.id}/profile" target="_blank">${member.customFields.name}</a>`,
-		        member.customFields.company || '',
-		        member.customFields.gender || '',
-		        member.customFields.address || '',
-		        member.customFields.county || '',
-		        member.customFields.postcode || '',
-		        member.customFields.country || '',
-		        member.customFields.mobile || '',
-		        member.customFields.primarycity || '',
-		        member.customFields['date-of-birth'] || '',
-		        motives,
-		        member.customFields.investor || '',
-		        member.customFields.canaccessapp || '',
-		        HELP.formatTimestamp(member.createdAt)
-		    ];
+			let data = [
+				`<a href="https://app.memberstack.com/apps/app_cllao1xky00gp0t4gd37g6u4b/members/${member.id}/profile" target="_blank">${member.customFields.name}</a>`,
+				member.customFields.company || '',
+				member.customFields.gender || '',
+				member.customFields.address || '',
+				member.customFields.county || '',
+				member.customFields.postcode || '',
+				member.customFields.country || '',
+				member.customFields.mobile || '',
+				member.customFields.primarycity || '',
+				member.customFields['date-of-birth'] || '',
+				motives,
+				member.customFields.investor || '',
+				member.customFields.canaccessapp || '',
+				HELP.formatTimestamp(member.createdAt)
+			];
 
-		    // If there are no plan connections, we still add the base data
-		    if (member.planConnections.length === 0) {
-		        tableMembers.row.add(data.concat(['', '', '', '', ''])).draw();
-		    }
-		    else {
-		        /*// Loop through planConnections and add rows for each plan
-		        member.planConnections.forEach(function(plan) {
-		        	if (plan.type == 'SUBSCRIPTION') {
-		        		var amount = '';
-		        		if (plan.payment && plan.payment.amount) {
-		        			var sum = HELP.formatThousands(plan.payment.amount);
-		        			amount = (plan.payment.currency == 'gbp' ? '£'+sum : sum+' '+plan.payment.currency);
-		        		}
-
-		        		var billingDate = '';
-		        		if (plan.payment && plan.payment.nextBillingDate) {
-		        			var timestamp = HELP.ISOToTimestamp(plan.payment.nextBillingDate);
-		        			billingDate = HELP.formatTimestamp(timestamp, false, true);
-		        		}
-
-			            let planData = [
-			                plan.planName || 'N/A',
-			                plan.status || 'N/A',
-			                amount,
-			                plan.payment ? plan.payment.status || 'N/A' : 'N/A',
-			                billingDate
-			            ];
-			            // Add a row combining base data and plan data
-			            tableMembers.row.add(data.concat(planData)).draw();
-			        }
-		        });*/
-		        let plansPaid = member.planConnections.filter(p => p.type === 'SUBSCRIPTION');
-
+			if (member.planConnections.length === 0) {
+				allRows.push(data.concat(['', '', '', '', '']));
+			} else {
+				let plansPaid = member.planConnections.filter(p => p.type === 'SUBSCRIPTION');
 				let activePlans = plansPaid.filter(p => p.active);
-				let displayPlans = [];
+				let displayPlans = activePlans.length > 0
+					? activePlans
+					: plansPaid.filter(p => p.payment && Object.keys(p.payment).length > 0);
 
-				if (activePlans.length > 0) {
-				    displayPlans = activePlans;
-				} else {
-				    displayPlans = plansPaid.filter(p => p.payment && Object.keys(p.payment).length > 0);
-				}
-
-				// Combine all selected plans into a single row
 				let planNames = displayPlans.map(p => p.planName || 'N/A').join(', ');
 				let planStatuses = displayPlans.map(p => p.status || 'N/A').join(', ');
 				let paymentAmounts = displayPlans.map(p => {
-				    if (p.payment && p.payment.amount) {
-				        let sum = HELP.formatThousands(p.payment.amount);
-				        return p.payment.currency === 'gbp' ? '£' + sum : sum + ' ' + p.payment.currency;
-				    }
-				    return '';
+					if (p.payment && p.payment.amount) {
+						let sum = HELP.formatThousands(p.payment.amount);
+						return p.payment.currency === 'gbp' ? '£' + sum : sum + ' ' + p.payment.currency;
+					}
+					return '';
 				}).join(', ');
 				let paymentStatuses = displayPlans.map(p => (p.payment ? p.payment.status || 'N/A' : 'N/A')).join(', ');
 				let billingDates = displayPlans.map(p => {
-				    if (p.payment && p.payment.nextBillingDate) {
-				        let ts = HELP.ISOToTimestamp(p.payment.nextBillingDate);
-				        return HELP.formatTimestamp(ts, false, true);
-				    }
-				    return '';
+					if (p.payment && p.payment.nextBillingDate) {
+						let ts = HELP.ISOToTimestamp(p.payment.nextBillingDate);
+						return HELP.formatTimestamp(ts, false, true);
+					}
+					return '';
 				}).join(', ');
 
-				// Add single row for member
-				tableMembers.row.add(data.concat([planNames, planStatuses, paymentAmounts, paymentStatuses, billingDates]));
-
-		    }
+				allRows.push(data.concat([planNames, planStatuses, paymentAmounts, paymentStatuses, billingDates]));
+			}
 		});
-		tableMembers.draw();
+		
+
+		let tableMembers = $('#members-table').DataTable({
+			data: allRows,
+			columns: [
+				{ title: "Member" }, { title: "Company" }, { title: "Gender" }, 
+				{ title: "Address" }, { title: "County" }, { title: "Postcode" },
+				{ title: "Country" }, { title: "Mobile" }, { title: "Primary City" },
+				{ title: "DOB" }, { title: "Motives" }, { title: "Investor" }, 
+				{ title: "App Access" }, { title: "Joined" }, 
+				{ title: "Plan Name" }, { title: "Plan Status" }, 
+				{ title: "Payment Amount" }, { title: "Payment Status" },
+				{ title: "Next Billing Date" }
+			],
+			lengthMenu: [
+				[50, 100, -1],
+				[50, 100, 'All']
+			],
+			pageLength: 50,
+			order: [[12, 'asc'], [13, 'asc']],
+			search: { return: true }
+		});
 
 
         // Create Columns dropdown filter
@@ -693,6 +680,7 @@ var REPORTS = (function($, window, document, undefined) {
 		    csvContent += headers.join(",") + "\n";
 
 		    // Process each row of the table
+		    console.log("Downloading rows:", tableMembers.rows({ search: 'applied' }).count());
 		    // tableMembers.rows({ search: 'applied' }).data().each(function (row) {
 		    tableMembers.rows({ search: 'applied' }).every(function () {
         		let row = this.data();
