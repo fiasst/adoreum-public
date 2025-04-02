@@ -645,10 +645,11 @@ var REPORTS = (function($, window, document, undefined) {
 				}).join(', ');
 
 				// Add single row for member
-				tableMembers.row.add(data.concat([planNames, planStatuses, paymentAmounts, paymentStatuses, billingDates])).draw();
+				tableMembers.row.add(data.concat([planNames, planStatuses, paymentAmounts, paymentStatuses, billingDates]));
 
 		    }
 		});
+		tableMembers.draw();
 
 
         // Create Columns dropdown filter
