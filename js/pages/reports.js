@@ -652,19 +652,17 @@ var REPORTS = (function($, window, document, undefined) {
         
         // Download functionality
         $downloadBtn.on('click', function () {
-        	if (!tableMembers) {
-				alert("Table is not ready yet.");
-				return;
-			}
 			console.log("DataTable row count:", tableMembers.rows({ search: 'applied' }).count());
 
 			let csvContent = "data:text/csv;charset=utf-8,";
 
 			// Pull all filtered data
 			const allData = tableMembers.rows({ search: 'applied' }).data().toArray();
+			console.log("allData", allData);
 
 			// Get visible column indexes (in correct display order)
 			const visibleIndexes = tableMembers.columns(':visible').indexes().toArray();
+			console.log('visibleIndexes', visibleIndexes);
 
 			// Get headers
 			let headers = visibleIndexes.map(index => {
@@ -702,6 +700,9 @@ var REPORTS = (function($, window, document, undefined) {
 				// Only add row if at least 1 field has content (guard against bad data)
 				if (csvRow.some(cell => cell !== '""')) {
 					csvContent += csvRow.join(",") + "\n";
+				}
+				else {
+					console.log('A row was empty.')
 				}
 			});
 
