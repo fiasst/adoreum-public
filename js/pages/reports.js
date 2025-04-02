@@ -67,182 +67,182 @@ var REPORTS = (function($, window, document, undefined) {
 		// Load next round of data.
 		if (response.data[0].hasNextPage === "true" && !useCache) {
         	pub.getMemberData(response.data[0].endCursor);
+        	return
 		}
-		else {
-			MAIN.thinking(false);
-			
-			// update cache
-			pub.setCache({data: pub.members});
+		
+		MAIN.thinking(false);
+		
+		// update cache
+		pub.setCache({data: pub.members});
 
-			// helper to set/update counts.
-			const updateValue = (prop, val) => {
-				if (!!prop[val]) {
-					prop[val]++;
-				}
-				else {
-					prop[val] = 1;
-				}
+		// helper to set/update counts.
+		const updateValue = (prop, val) => {
+			if (!!prop[val]) {
+				prop[val]++;
+			}
+			else {
+				prop[val] = 1;
+			}
+		}
+
+		// create Members live table view.
+		liveTable(pub.members);
+
+		// Compile Overview.
+		$.each(pub.members, (i, member) => {
+			// gender.
+			if (member.customFields.gender) {
+				updateValue(pub.genders, member.customFields.gender);
 			}
 
-			// create Members live table view.
-			liveTable(pub.members);
+			// country.
+			if (member.customFields.country) {
+				updateValue(pub.countries, member.customFields.country);
+			}
+			else {
+				updateValue(pub.countries, 'Unknown');
+			}
 
-			// Compile Overview.
-			$.each(pub.members, (i, member) => {
-				// gender.
-				if (member.customFields.gender) {
-					updateValue(pub.genders, member.customFields.gender);
-				}
-
-				// country.
-				if (member.customFields.country) {
-					updateValue(pub.countries, member.customFields.country);
-				}
-				else {
-					updateValue(pub.countries, 'Unknown');
-				}
-
-				// primary city.
-				if (member.customFields.primarycity) {
-					updateValue(pub.primarycity, member.customFields.primarycity);
-				}
-				else {
-					updateValue(pub.primarycity, 'Unknown');
-				}
+			// primary city.
+			if (member.customFields.primarycity) {
+				updateValue(pub.primarycity, member.customFields.primarycity);
+			}
+			else {
+				updateValue(pub.primarycity, 'Unknown');
+			}
 
 
-				// motives.
-				if (member.customFields.motive) {
-					$.each(member.customFields.motive.split('|'), (i, motive) => {
-						updateValue(pub.motives, motive);
-					});
-				}
-				else {
-					updateValue(pub.motives, 'Unknown');
-				}
+			// motives.
+			if (member.customFields.motive) {
+				$.each(member.customFields.motive.split('|'), (i, motive) => {
+					updateValue(pub.motives, motive);
+				});
+			}
+			else {
+				updateValue(pub.motives, 'Unknown');
+			}
 
-				// age.
-				if (member.customFields['date-of-birth']) {
-					let year = member.customFields['date-of-birth'].split('/')[2],
-						currentYear = new Date().getFullYear(),
-						range = 'Unknown';
+			// age.
+			if (member.customFields['date-of-birth']) {
+				let year = member.customFields['date-of-birth'].split('/')[2],
+					currentYear = new Date().getFullYear(),
+					range = 'Unknown';
 
-					if (!!year) {
-			            const age = currentYear - parseInt(year.trim());
-			            
-			            if (age >= 16 && age <= 25) {
-			            	range = "16-25";
-			            }
-			            else if (age >= 26 && age <= 35) {
-			            	range = "26-35";
-			            }
-			            else if (age >= 36 && age <= 45) {
-			            	range = "36-45";
-			            }
-			            else if (age >= 46 && age <= 55) {
-			            	range = "46-55";
-			            }
-			            else if (age >= 56 && age <= 65) {
-			            	range = "56-65";
-			            }
-			            else if (age >= 66 && age <= 75) {
-			            	range = "66-75";
-			            }
-			            else if (age >= 76 && age <= 85) {
-			            	range = "76-85";
-			            }
-			            else if (age >= 86 && age <= 95) {
-			            	range = "86-95";
-			            }
-			            else if (age >= 96 && age <= 105) {
-			            	range = "96-105";
-			            }
-					}
-					updateValue(pub.ageRanges, range);
+				if (!!year) {
+		            const age = currentYear - parseInt(year.trim());
+		            
+		            if (age >= 16 && age <= 25) {
+		            	range = "16-25";
+		            }
+		            else if (age >= 26 && age <= 35) {
+		            	range = "26-35";
+		            }
+		            else if (age >= 36 && age <= 45) {
+		            	range = "36-45";
+		            }
+		            else if (age >= 46 && age <= 55) {
+		            	range = "46-55";
+		            }
+		            else if (age >= 56 && age <= 65) {
+		            	range = "56-65";
+		            }
+		            else if (age >= 66 && age <= 75) {
+		            	range = "66-75";
+		            }
+		            else if (age >= 76 && age <= 85) {
+		            	range = "76-85";
+		            }
+		            else if (age >= 86 && age <= 95) {
+		            	range = "86-95";
+		            }
+		            else if (age >= 96 && age <= 105) {
+		            	range = "96-105";
+		            }
 				}
+				updateValue(pub.ageRanges, range);
+			}
 
-				// investors.
-				if (member.customFields.investor) {
-					updateValue(pub.investors, member.customFields.investor.capFirst());
-				}
+			// investors.
+			if (member.customFields.investor) {
+				updateValue(pub.investors, member.customFields.investor.capFirst());
+			}
 
-				// joined.
-				if (member.createdAt) {
-					let date = new Date(member.createdAt);
-					let year = date.getFullYear();
-					let month = date.getMonth()+1;// returns 0-11, so add 1 to get 1-12.
-					if (month < 10) month = "0"+month;
-					updateValue(pub.joined, `${year}-${month}`);
-				}
+			// joined.
+			if (member.createdAt) {
+				let date = new Date(member.createdAt);
+				let year = date.getFullYear();
+				let month = date.getMonth()+1;// returns 0-11, so add 1 to get 1-12.
+				if (month < 10) month = "0"+month;
+				updateValue(pub.joined, `${year}-${month}`);
+			}
 
-				// referrer.
-				if (member.customFields.referrer) {
-					updateValue(pub.referrer, member.customFields.referrer);
-				}
-				else {
-					updateValue(pub.referrer, 'Unknown');
-				}
+			// referrer.
+			if (member.customFields.referrer) {
+				updateValue(pub.referrer, member.customFields.referrer);
+			}
+			else {
+				updateValue(pub.referrer, 'Unknown');
+			}
 
-				// plans.
-				if (member.planConnections) {
-					let subStatus = [],
-						status;
+			// plans.
+			if (member.planConnections) {
+				let subStatus = [],
+					status;
 
-					$.each(member.planConnections, (i, plan) => {
-						if (plan.type == "SUBSCRIPTION") {
-							switch (plan.status) {
-								case "ACTIVE":
-									subStatus.push('active');
-									// Build active plans data
-									updateValue(pub.plans, plan.planName);
-									break;
-								case "CANCELED":
-									subStatus.push('canceled');
-									break;
-								case "TRIALING":
-									subStatus.push('trialing');
-									break;
-								case "PAST_DUE":
-									subStatus.push('past_due');
-									break;
-								case "UNPAID":
-									subStatus.push('unpaid');
-							}
+				$.each(member.planConnections, (i, plan) => {
+					if (plan.type == "SUBSCRIPTION") {
+						switch (plan.status) {
+							case "ACTIVE":
+								subStatus.push('active');
+								// Build active plans data
+								updateValue(pub.plans, plan.planName);
+								break;
+							case "CANCELED":
+								subStatus.push('canceled');
+								break;
+							case "TRIALING":
+								subStatus.push('trialing');
+								break;
+							case "PAST_DUE":
+								subStatus.push('past_due');
+								break;
+							case "UNPAID":
+								subStatus.push('unpaid');
 						}
-					});
+					}
+				});
 
-					// Build subscription status data.
-					if (subStatus.includes('active')) {
-						status = 'Active';
-					}
-					else if (subStatus.includes('past_due')) {
-						status = 'Past due';
-					}
-					else if (subStatus.includes('unpaid')) {
-						status = 'Unpaid';
-					}
-					else if (subStatus.includes('canceled')) {
-						status = 'Canceled';
-					}
-					else if (subStatus.includes('trialing')) {
-						status = 'Trialing';
-					}
-					else if (subStatus.length < 1) {
-						status = 'Never subscribed';
-					}
-					updateValue(pub.subscriberStatus, status);
+				// Build subscription status data.
+				if (subStatus.includes('active')) {
+					status = 'Active';
 				}
-					
-			});
+				else if (subStatus.includes('past_due')) {
+					status = 'Past due';
+				}
+				else if (subStatus.includes('unpaid')) {
+					status = 'Unpaid';
+				}
+				else if (subStatus.includes('canceled')) {
+					status = 'Canceled';
+				}
+				else if (subStatus.includes('trialing')) {
+					status = 'Trialing';
+				}
+				else if (subStatus.length < 1) {
+					status = 'Never subscribed';
+				}
+				updateValue(pub.subscriberStatus, status);
+			}
+				
+		});
 
-			// Sort data by Object Key values.
-			REPORTS.countries = HELP.sortObjectByKeys(REPORTS.countries);
-			REPORTS.motives = HELP.sortObjectByKeys(REPORTS.motives);
-			REPORTS.ageRanges = HELP.sortObjectByKeys(REPORTS.ageRanges);
-			REPORTS.genders = HELP.sortObjectByKeys(REPORTS.genders);
+		// Sort data by Object Key values.
+		REPORTS.countries = HELP.sortObjectByKeys(REPORTS.countries);
+		REPORTS.motives = HELP.sortObjectByKeys(REPORTS.motives);
+		REPORTS.ageRanges = HELP.sortObjectByKeys(REPORTS.ageRanges);
+		REPORTS.genders = HELP.sortObjectByKeys(REPORTS.genders);
 
-			pub.generateCharts();
-		}
+		pub.generateCharts();
 	}
 
 
