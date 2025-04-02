@@ -605,6 +605,7 @@ var REPORTS = (function($, window, document, undefined) {
 		});
 
 
+		// Create the table with data.
 		tableMembers = $('#members-table').DataTable({
 			data: allRows,
 			columns: [
@@ -652,17 +653,13 @@ var REPORTS = (function($, window, document, undefined) {
         
         // Download functionality
         $downloadBtn.on('click', function () {
-			console.log("DataTable row count:", tableMembers.rows({ search: 'applied' }).count());
-
 			let csvContent = "data:text/csv;charset=utf-8,";
 
 			// Pull all filtered data
 			const allData = tableMembers.rows({ search: 'applied' }).data().toArray();
-			console.log("allData", allData);
 
 			// Get visible column indexes (in correct display order)
 			const visibleIndexes = tableMembers.columns(':visible').indexes().toArray();
-			console.log('visibleIndexes', visibleIndexes);
 
 			// Get headers
 			let headers = visibleIndexes.map(index => {
@@ -701,21 +698,25 @@ var REPORTS = (function($, window, document, undefined) {
 				if (csvRow.some(cell => cell !== '""')) {
 					csvContent += csvRow.join(",") + "\n";
 				}
-				else {
-					console.log('A row was empty.')
-				}
 			});
-			console.log('csvRow', csvContent);
 
-			// Trigger download
-			const date = new Date().toISOString().split('T')[0];
-			const encodedUri = encodeURI(csvContent);
-			const link = document.createElement("a");
-			link.setAttribute("href", encodedUri);
-			link.setAttribute("download", `members-${date}.csv`);
-			document.body.appendChild(link);
-			link.click();
-			document.body.removeChild(link);
+			// Trigger CSV download using Blob
+			let date = new Date().toISOString().split('T')[0];
+			let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+			let link = document.createElement("a");
+
+			if (navigator.msSaveBlob) {
+				// For IE11
+				navigator.msSaveBlob(blob, `members-${date}.csv`);
+			} else {
+				let url = URL.createObjectURL(blob);
+				link.setAttribute("href", url);
+				link.setAttribute("download", `members-${date}.csv`);
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+				URL.revokeObjectURL(url);
+			}
 		});
 	}
 
