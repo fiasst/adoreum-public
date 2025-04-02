@@ -550,20 +550,6 @@ var REPORTS = (function($, window, document, undefined) {
 
 	function liveTable(members) {
 		// Process the data and add rows dynamically
-        var tableMembers = $('#members-table')
-        	.DataTable({
-	        	lengthMenu: [
-			        [50, 100, -1],
-			        [50, 100, 'All']
-			    ],
-	        	pageLength: 50,
-			    order: [[12, 'asc'], [13, 'asc']],// First sort by payment.status (asc), then by payment.nextBillingDate (asc)
-			    search: {
-			        return: true
-			    }
-			});
-
-
 		let allRows = [];
         members.forEach(function(member) {
 			let motives = member.customFields.motive ? member.customFields.motive.split('|').join(', ') : '';
@@ -615,7 +601,7 @@ var REPORTS = (function($, window, document, undefined) {
 				allRows.push(data.concat([planNames, planStatuses, paymentAmounts, paymentStatuses, billingDates]));
 			}
 		});
-		
+
 
 		let tableMembers = $('#members-table').DataTable({
 			data: allRows,
