@@ -681,7 +681,7 @@ var REPORTS = (function($, window, document, undefined) {
 				let csvRow = [];
 
 				visibleIndexes.forEach((columnIndex, i) => {
-					console.log('columnIndex', columnIndex)
+					console.log('i', i)
 					let cell = row[columnIndex];
 					let content = cell ? cell.toString().trim() : "";
 
@@ -719,7 +719,6 @@ var REPORTS = (function($, window, document, undefined) {
 			link.click();
 			document.body.removeChild(link);
 		});
-		console.log('csvContent', csvContent);
 	}
 
 
