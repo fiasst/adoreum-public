@@ -612,7 +612,7 @@ var REPORTS = (function($, window, document, undefined) {
 			columns: [
 				{ title: "Member" }, { title: "Company" }, { title: "Gender" }, 
 				{ title: "Address" }, { title: "County" }, { title: "Postcode" },
-				{ title: "Country" }, { title: "Mobile" }, { title: "Primary City" },
+				{ title: "Country" }, { title: "Mobile" }, { title: "Email" }, { title: "Primary City" },
 				{ title: "DOB" }, { title: "Motives" }, { title: "Investor" }, 
 				{ title: "App Access" }, { title: "Joined" }, 
 				{ title: "Plan Name" }, { title: "Plan Status" }, 
