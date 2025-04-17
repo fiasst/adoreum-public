@@ -565,6 +565,7 @@ var REPORTS = (function($, window, document, undefined) {
 				member.customFields.postcode || '',
 				member.customFields.country || '',
 				member.customFields.mobile || '',
+				member.customFields.email || '',
 				member.customFields.primarycity || '',
 				member.customFields['date-of-birth'] || '',
 				motives,
