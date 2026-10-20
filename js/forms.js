@@ -17,20 +17,29 @@ var FORMS = (function($, window, document, undefined) {
     // International telephone inputs (intl-tel-input).
     // Country selector (flag + dial code) appears before each input[type="tel"].
     // Defaults to +44 (UK). Validates that a country code is set. Submits E.164.
+    // Assets live in js/vendors/intl-tel-input and css/vendors/intl-tel-input.
     //
-    const ITI_VERSION = '29.5.4';
-    const ITI_CDN = 'https://cdn.jsdelivr.net/npm/intl-tel-input@' + ITI_VERSION;
     var telSelectorResizeObserver;
 
+    pub.getPublicRoot = function() {
+        var src = ($('script[src*="/js/forms"]').attr('src') || '').split('?')[0];
+        if (src) {
+            return src.replace(/\/js\/forms[^/]*$/, '');
+        }
+        return '';
+    };
+
     pub.initTelInputs = function() {
-        var $telInputs = $('input[type="tel"]');
+        var $telInputs = $('input[type="tel"]'),
+            assetRoot = pub.getPublicRoot();
+
         if (!$telInputs.length) return;
 
         if (!document.getElementById('intl-tel-input-css')) {
             $('<link>', {
                 id: 'intl-tel-input-css',
                 rel: 'stylesheet',
-                href: ITI_CDN + '/dist/css/intlTelInput.css'
+                href: assetRoot + '/css/vendors/intl-tel-input/intlTelInput.css'
             }).appendTo(document.head);
         }
         if (window.intlTelInput) {
@@ -45,7 +54,7 @@ var FORMS = (function($, window, document, undefined) {
         }
         var script = document.createElement('script');
         script.id = 'intl-tel-input-js';
-        script.src = ITI_CDN + '/dist/js/intlTelInputWithUtils.min.js';
+        script.src = assetRoot + '/js/vendors/intl-tel-input/intlTelInputWithUtils.min.js';
         script.onload = function() {
             pub.bindTelInputs($('input[type="tel"]'));
         };
