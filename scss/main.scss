@@ -39,6 +39,29 @@ textarea {
   background-color: #1a1b1f;
 }
 
+// intl-tel-input: country selector sits before input[type="tel"].
+.iti {
+  display: block;
+  width: 100%;
+  container-type: inline-size;
+}
+// Plugin writes a one-time pixel width. Size against .iti, not the flag button.
+.iti--inline-country-selector:not(.iti--detached-country-selector) .iti__country-selector {
+  width: 100cqi !important;
+  max-width: 100cqi;
+}
+.iti__selected-dial-code {
+  font-size: 14px;
+}
+.iti__search-input {
+  font-size: 14px;
+}
+.iti__country {
+  text-align: left;
+  font-size: 14px;
+  margin: 0;
+}
+
 
 
 /*
